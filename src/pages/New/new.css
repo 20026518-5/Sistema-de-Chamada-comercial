@@ -24,3 +24,19 @@ form input[type="radio"]:not(:first-child){
 .status{
   margin-bottom: 0.5em;
 }
+
+.loading-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #EEE;
+  padding: 0.7em;
+  border-radius: 5px;
+  margin-bottom: 1em;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.loading-field span {
+  font-style: italic;
+}
