@@ -24,28 +24,39 @@ export default  function Dashboard() {
   const [showModal,setShowModal] = useState(false);
   const [details,setDetails] = useState({});
 
-// No useEffect, evite setChamados([]) fora da lógica de carregamento real
-useEffect(() => {
-  async function loadChamados() {
-    try {
-      const q = query(listRef, orderBy('created', 'desc'), limit(5));
-      const querySnapshot = await getDocs(q);
-      
-      setChamados([]); // Limpa para evitar duplicatas
-      await updateState(querySnapshot);
-      
-    } catch (error) {
-      console.log("ERRO AO BUSCAR CHAMADOS: ", error);
-      toast.error("Erro ao carregar os chamados.");
-    } finally {
-      // O 'finally' executa independente de dar erro ou sucesso, 
-      // garantindo que o carregamento pare e o loop termine.
-      setLoading(false);
+// Na busca inicial dentro do useEffect
+async function loadChamados() {
+  try {
+    let q;
+    // Se não for admin, filtra apenas os chamados criados pelo usuário logado
+    if (user.role !== 'admin') {
+      q = query(listRef, 
+                where('userId', '==', user.uid), 
+                orderBy('created', 'desc'), 
+                limit(5));
+    } else {
+      q = query(listRef, orderBy('created', 'desc'), limit(5));
     }
+    // ... restante do carregamento
+  } catch (error) { /* ... */ }
+}
+
+const handleDelete = async (item) => {
+  const agora = new Date();
+  const dataCriacao = item.created.toDate();
+  const diferencaMinutos = (agora - dataCriacao) / (1000 * 60);
+
+  // Regra: Usuário comum só apaga em 15 min. Admin TI apaga sempre.
+  if (user.role !== 'admin' && diferencaMinutos > 15) {
+    toast.error('O prazo de 15 minutos para exclusão expirou. Apenas o TI pode remover.');
+    return;
   }
 
-  loadChamados();
-}, []);
+  const docRef = doc(db, 'chamados', item.id);
+  await deleteDoc(docRef)
+    .then(() => toast.success('Chamado deletado com sucesso'))
+    .catch(() => toast.error('Ops, erro ao deletar'));
+};
 
   const updateState = async (querySnapshot) =>{ //preenche a useState=chamados
     const isCollectionEmpty = (querySnapshot.size === 0);
