@@ -77,12 +77,15 @@ async function signUp(name, email, password, secretaria, departamento) {
 // Atualize o signIn para buscar esses novos campos também
 async function signIn(email, password) {
   setLoadingAuth(true);
+
   try {
     const value = await signInWithEmailAndPassword(auth, email, password);
     const uid = value.user.uid;
+
     const docRef = doc(db, 'users', uid);
     const docSnap = await getDoc(docRef);
 
+    // Recupera todos os dados salvos no cadastro
     const data = {
       uid: uid,
       nome: docSnap.data().nome,
@@ -90,13 +93,20 @@ async function signIn(email, password) {
       avatarUrl: docSnap.data().avatarUrl,
       secretaria: docSnap.data().secretaria,
       departamento: docSnap.data().departamento,
-      role: docSnap.data().role
+      role: docSnap.data().role,
     };
 
     setUser(data);
     storageUser(data);
-    // ... restante do código
-  } catch (err) { /* ... */ }
+    setLoadingAuth(false);
+    toast.success('Bem-vindo de volta');
+    navigate('/dashboard');
+
+  } catch (err) {
+    console.error('Erro ao logar:', err);
+    toast.error('Ops, algo deu errado. Verifique suas credenciais.');
+    setLoadingAuth(false);
+  }
 }
 
   function storageUser(data){
