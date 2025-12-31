@@ -31,13 +31,15 @@ useEffect(() => {
       const q = query(listRef, orderBy('created', 'desc'), limit(5));
       const querySnapshot = await getDocs(q);
       
-      // Limpa a lista apenas se a busca for bem-sucedida para evitar tela vazia em caso de erro
-      setChamados([]); 
+      setChamados([]); // Limpa para evitar duplicatas
       await updateState(querySnapshot);
-    } catch (err) {
-      console.error(err);
-      toast.error("Erro ao carregar chamados.");
+      
+    } catch (error) {
+      console.log("ERRO AO BUSCAR CHAMADOS: ", error);
+      toast.error("Erro ao carregar os chamados.");
     } finally {
+      // O 'finally' executa independente de dar erro ou sucesso, 
+      // garantindo que o carregamento pare e o loop termine.
       setLoading(false);
     }
   }
