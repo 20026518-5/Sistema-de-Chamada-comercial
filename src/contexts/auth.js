@@ -119,24 +119,23 @@ async function signIn(email, password) {
     setUser(null);
   }
 
-  return(
-    <AuthContext.Provider 
-      value={{
-        signed: !!user,
-        user,
-        signIn,
-        signUp,
-        loadingAuth,
-        loading,
-        logOut,
-        storageUser,
-        setUser,
-
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  )
+return(
+  <AuthContext.Provider 
+    value={{
+      signed: !!user,
+      user,
+      signIn,
+      signUp, // Deve estar aqui
+      loadingAuth,
+      loading,
+      logOut,
+      storageUser,
+      setUser,
+    }}
+  >
+    {children}
+  </AuthContext.Provider>
+)
 }
 
 export default AuthProvider;
