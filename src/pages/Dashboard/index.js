@@ -24,20 +24,26 @@ export default  function Dashboard() {
   const [showModal,setShowModal] = useState(false);
   const [details,setDetails] = useState({});
 
-  useEffect(()=>{
-      async function loadChamados() {
-        
-        const q = query(listRef,orderBy('created','desc'),limit(5));
-        const querySnapshot = await getDocs(q);
-        setChamados([]); // para n duplicar a lista de chamados
-        await updateState(querySnapshot);
-        setLoading(false)
-      }
-      loadChamados();
+// No useEffect, evite setChamados([]) fora da lógica de carregamento real
+useEffect(() => {
+  async function loadChamados() {
+    try {
+      const q = query(listRef, orderBy('created', 'desc'), limit(5));
+      const querySnapshot = await getDocs(q);
+      
+      // Limpa a lista apenas se a busca for bem-sucedida para evitar tela vazia em caso de erro
+      setChamados([]); 
+      await updateState(querySnapshot);
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro ao carregar chamados.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
-
-      return() =>{}
-  },[]);
+  loadChamados();
+}, []);
 
   const updateState = async (querySnapshot) =>{ //preenche a useState=chamados
     const isCollectionEmpty = (querySnapshot.size === 0);
