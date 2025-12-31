@@ -137,43 +137,62 @@ export default function Dashboard() {
         ) : (
           <>
             <table>
-              <thead>
-                <tr>
-                  <th scope="col">Cliente</th>
-                  <th scope="col">Assunto</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Cadastrado em</th>
-                  <th scope="col">#</th>
-                </tr>
-              </thead>
-              <tbody>         
-                { chamados.map((item, index) => (
-                  <tr key={index}>
-                    <td data-label='Cliente'>{item.cliente}</td>
-                    <td data-label='Assunto'>{item.assunto}</td>
-                    <td data-label='Status'>
-                      <span className="badge" style={{backgroundColor: item.status === 'Em aberto' ? '#5CB85C' : '#ccc'}}>
-                        {item.status}
-                      </span>
-                    </td>
-                    <td data-label='Cadastrado'>{item.createdFormat}</td>
-                    <td data-label='#'>
-                      <button onClick={() => toggleModal(item)} className="action" style={{backgroundColor:'#3583f6'}}>
-                        <FiSearch size={17} color='#fff' />
-                      </button>
-                      {user.role !== 'admin' && (
-                        <Link className="action" style={{backgroundColor:'#f6a935'}} to={`/new/${item.id}`}>
-                          <FiEdit2 size={17} color='#fff'/>
-                        </Link>
-                      )}
-                      <button onClick={() => handleDelete(item)} className="action" style={{backgroundColor:'#FD441B'}}>
-                        <FiDelete size={17} color='#fff' />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+  <thead>
+    <tr>
+      <th scope="col">Cliente</th>
+      {/* 1. NOVAS COLUNAS PARA O ADMIN */}
+      {user.role === 'admin' && (
+        <>
+          <th scope="col">Usuário</th>
+          <th scope="col">Secretaria</th>
+          <th scope="col">Departamento</th>
+        </>
+      )}
+      <th scope="col">Assunto</th>
+      <th scope="col">Status</th>
+      <th scope="col">Cadastrado em</th>
+      <th scope="col">#</th>
+    </tr>
+  </thead>
+  <tbody>         
+    { chamados.map((item, index) => (
+      <tr key={index}>
+        <td data-label='Cliente'>{item.cliente}</td>
+        
+        {/* 2. EXIBIR DADOS DO SOLICITANTE PARA O ADMIN */}
+        {user.role === 'admin' && (
+          <>
+            <td data-label='Usuário'>{item.userName}</td>
+            <td data-label='Secretaria'>{item.secretaria}</td>
+            <td data-label='Departamento'>{item.departamento}</td>
+          </>
+        )}
+
+        <td data-label='Assunto'>{item.assunto}</td>
+        <td data-label='Status'>
+          <span className="badge" style={{backgroundColor: item.status === 'Em aberto' ? '#5CB85C' : '#ccc'}}>
+            {item.status}
+          </span>
+        </td>
+        <td data-label='Cadastrado'>{item.createdFormat}</td>
+        <td data-label='#'>
+          <button onClick={() => toggleModal(item)} className="action" style={{backgroundColor:'#3583f6'}}>
+            <FiSearch size={17} color='#fff' />
+          </button>
+
+          {/* 3. REMOVIDA A TRAVA QUE IMPEDIA O ADMIN DE EDITAR */}
+          <Link className="action" style={{backgroundColor:'#f6a935'}} to={`/new/${item.id}`}>
+            <FiEdit2 size={17} color='#fff'/>
+          </Link>
+
+          <button onClick={() => handleDelete(item)} className="action" style={{backgroundColor:'#FD441B'}}>
+            <FiDelete size={17} color='#fff' />
+          </button>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
 
             {loadMore && (
               <div style={{ marginTop: 15 }}>
