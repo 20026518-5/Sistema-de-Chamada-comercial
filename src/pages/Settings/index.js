@@ -33,12 +33,13 @@ export default function Settings() {
       });
       setSetores(lista);
     } catch (error) {
-      console.error(error);
+      console.error("Erro ao buscar setores: ", error);
     } finally {
       setLoading(false);
     }
   }
 
+  // Estilo para prevenir sobreposição de texto
   const cellTextStyle = {
     wordBreak: 'break-word',
     overflowWrap: 'break-word',
@@ -60,23 +61,23 @@ export default function Settings() {
         })
       );
       await Promise.all(promises);
-      toast.success("Unidade cadastrada!");
+      toast.success("Unidade cadastrada com sucesso!");
       setSecretaria('');
       setListaDepartamentos([]);
       loadSetores();
-    } catch (error) { toast.error("Erro ao salvar."); }
+    } catch (error) { toast.error("Erro ao salvar no banco de dados."); }
   }
 
   async function handleDeleteSec(nomeSec) {
-    if(!window.confirm(`Excluir "${nomeSec}" e todos os departamentos?`)) return;
+    if(!window.confirm(`Deseja excluir "${nomeSec}" e todos os seus departamentos?`)) return;
     try {
       const batch = writeBatch(db);
       const itens = setores.filter(s => s.secretaria === nomeSec);
       itens.forEach(item => batch.delete(doc(db, 'setores', item.id)));
       await batch.commit();
-      toast.success("Excluído com sucesso!");
+      toast.success("Unidade removida!");
       loadSetores();
-    } catch (error) { toast.error("Erro ao excluir."); }
+    } catch (error) { toast.error("Erro ao excluir unidade."); }
   }
 
   async function handleUpdateSec(antigoNome) {
@@ -86,10 +87,10 @@ export default function Settings() {
       const itens = setores.filter(s => s.secretaria === antigoNome);
       itens.forEach(item => batch.update(doc(db, 'setores', item.id), { secretaria: novoNomeSec }));
       await batch.commit();
-      toast.success("Atualizado!");
+      toast.success("Nome da unidade atualizado!");
       setEditandoSec(null);
       loadSetores();
-    } catch (error) { toast.error("Erro ao atualizar."); }
+    } catch (error) { toast.error("Erro ao atualizar unidade."); }
   }
 
   async function handleUpdateDep(id) {
@@ -99,7 +100,7 @@ export default function Settings() {
       toast.success("Departamento atualizado!");
       setEditandoId(null);
       loadSetores();
-    } catch (error) { toast.error("Erro ao atualizar."); }
+    } catch (error) { toast.error("Erro ao atualizar departamento."); }
   }
 
   const setoresAgrupados = setores.reduce((acc, item) => {
@@ -114,101 +115,135 @@ export default function Settings() {
       <div className="content">
         <Title name="Configurações de Setores"><FiSettings size={25} /></Title>
 
-        {/* BLOCO DE CADASTRO - LARGURA TOTAL NO TOPO */}
+        {/* --- BLOCO DE CADASTRO --- */}
         <div className="container">
           <div className="form-profile">
-            <h2 style={{ marginBottom: '15px', fontSize: '1.2em' }}>Cadastrar Unidade</h2>
-            <label>Nome da Unidade (Secretaria/Autarquia)</label>
-            <input type="text" value={secretaria} onChange={(e) => setSecretaria(e.target.value)} placeholder="Ex: Secretaria de Saúde" />
+            <h2 style={{ marginBottom: '20px', fontSize: '1.3em', color: '#181c2e' }}>Cadastrar Nova Unidade</h2>
             
-            <div style={{ marginTop: '15px' }}>
-              <label>Adicionar Departamentos</label>
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Nome da Secretaria ou Autarquia</label>
+              <input 
+                type="text" 
+                value={secretaria} 
+                onChange={(e) => setSecretaria(e.target.value)} 
+                placeholder="Digite o nome completo da unidade" 
+                style={{ width: '100%' }}
+              />
+            </div>
+            
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Adicionar Departamentos</label>
               <div style={{ display: 'flex', gap: '10px' }}>
-                <input type="text" value={departamentoInput} onChange={(e) => setDepartamentoInput(e.target.value)} style={{ flex: 1, marginBottom: 0 }} placeholder="Ex: Almoxarifado" />
-                <button onClick={(e) => { e.preventDefault(); if(departamentoInput) { setListaDepartamentos([...listaDepartamentos, departamentoInput]); setDepartamentoInput(''); } }} style={{ width: '50px', height: '43px', backgroundColor: '#181c2e' }}>
+                <input 
+                  type="text" 
+                  value={departamentoInput} 
+                  onChange={(e) => setDepartamentoInput(e.target.value)} 
+                  style={{ flex: 1, marginBottom: 0 }} 
+                  placeholder="Digite o nome do departamento e clique no +" 
+                />
+                <button 
+                  onClick={(e) => { 
+                    e.preventDefault(); 
+                    if(departamentoInput) { 
+                      setListaDepartamentos([...listaDepartamentos, departamentoInput]); 
+                      setDepartamentoInput(''); 
+                    } 
+                  }} 
+                  style={{ width: '50px', height: '43px', backgroundColor: '#181c2e', border: 0, borderRadius: '4px' }}
+                >
                   <FiPlus size={20} color="#FFF" />
                 </button>
               </div>
             </div>
 
+            {/* Lista temporária (Bloco abaixo do enunciado de digitação) */}
             {listaDepartamentos.length > 0 && (
-              <div style={{ marginTop: '15px', padding: '10px', background: '#f0f4f8', borderRadius: '5px', border: '1px solid #d1d9e0' }}>
-                <p><strong>Aguardando salvamento:</strong></p>
+              <div style={{ marginTop: '10px', padding: '15px', background: '#f0f4f8', borderRadius: '5px', border: '1px solid #d1d9e0' }}>
+                <p style={{ marginBottom: '10px', fontWeight: 'bold' }}>Departamentos pendentes de salvamento:</p>
                 {listaDepartamentos.map((dep, i) => (
-                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid #e1e4e8' }}>
-                    <span style={{ fontSize: '0.9em' }}>{dep}</span>
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #e1e4e8' }}>
+                    <span style={{ fontSize: '0.95em' }}>{dep}</span>
                     <FiX color="red" cursor="pointer" onClick={() => setListaDepartamentos(listaDepartamentos.filter((_, idx) => idx !== i))} />
                   </div>
                 ))}
               </div>
             )}
             
-            <button onClick={handleSaveAll} style={{ marginTop: '20px', backgroundColor: '#1fcc44' }}>Cadastrar Tudo</button>
+            <button onClick={handleSaveAll} style={{ marginTop: '20px', backgroundColor: '#1fcc44', padding: '12px', fontWeight: 'bold' }}>
+              Finalizar Cadastro da Unidade
+            </button>
           </div>
         </div>
 
-        {/* SEÇÃO DE LISTAGEM - ORGANIZADA EM DUAS COLUNAS */}
-        <div className="container">
+        <hr style={{ margin: '30px 0', border: '0', borderTop: '1px solid #ddd' }} />
+
+        {/* --- LISTAGEM EM DOIS BLOCOS HORIZONTAIS --- */}
+        <div className="container" style={{ background: 'transparent', padding: 0, boxShadow: 'none' }}>
           <Title name="Unidades Cadastradas"><FiList size={22} /></Title>
           
           {loading ? (
-            <span>Carregando...</span>
+            <div className="container"><span>Carregando dados...</span></div>
           ) : (
             <div style={{ 
               display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(45%, 1fr))', 
-              gap: '20px', 
-              marginTop: '20px' 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
+              gap: '20px' 
             }}>
               {Object.keys(setoresAgrupados).map((nomeSec) => (
                 <div key={nomeSec} style={{ 
                   background: '#FFF', 
-                  padding: '15px', 
+                  padding: '20px', 
                   borderRadius: '8px', 
                   border: '1px solid #ddd',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                  boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
                   alignSelf: 'start'
                 }}>
                   
-                  {/* Cabeçalho do Bloco */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '2px solid #181c2e', paddingBottom: '8px', marginBottom: '12px' }}>
+                  {/* Cabeçalho da Unidade */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '2px solid #181c2e', paddingBottom: '10px', marginBottom: '15px' }}>
                     {editandoSec === nomeSec ? (
                       <div style={{ display: 'flex', gap: '5px', flex: 1 }}>
-                        <input type="text" value={novoNomeSec} onChange={(e) => setNovoNomeSec(e.target.value)} style={{ marginBottom: 0, height: '32px' }} />
-                        <button onClick={() => handleUpdateSec(nomeSec)} style={{ background: '#1fcc44', border: 0, padding: '5px', borderRadius: '4px' }}><FiCheck color="#FFF" /></button>
-                        <button onClick={() => setEditandoSec(null)} style={{ background: '#999', border: 0, padding: '5px', borderRadius: '4px' }}><FiX color="#FFF" /></button>
+                        <input type="text" value={novoNomeSec} onChange={(e) => setNovoNomeSec(e.target.value)} style={{ marginBottom: 0, height: '35px' }} />
+                        <button onClick={() => handleUpdateSec(nomeSec)} style={{ background: '#1fcc44', border: 0, padding: '5px 10px', borderRadius: '4px' }}><FiCheck color="#FFF" /></button>
+                        <button onClick={() => setEditandoSec(null)} style={{ background: '#999', border: 0, padding: '5px 10px', borderRadius: '4px' }}><FiX color="#FFF" /></button>
                       </div>
                     ) : (
                       <>
-                        <h3 style={{ margin: 0, fontSize: '1em', ...cellTextStyle, fontWeight: 'bold' }}>{nomeSec}</h3>
-                        <div style={{ display: 'flex', gap: '10px' }}>
-                          <FiEdit2 size={16} color="#181c2e" cursor="pointer" onClick={() => { setEditandoSec(nomeSec); setNovoNomeSec(nomeSec); }} />
-                          <FiTrash2 size={16} color="#FD441B" cursor="pointer" onClick={() => handleDeleteSec(nomeSec)} />
+                        <h3 style={{ margin: 0, fontSize: '1.1em', ...cellTextStyle, fontWeight: 'bold' }}>{nomeSec}</h3>
+                        <div style={{ display: 'flex', gap: '15px' }}>
+                          <FiEdit2 size={18} color="#181c2e" cursor="pointer" title="Editar Unidade" onClick={() => { setEditandoSec(nomeSec); setNovoNomeSec(nomeSec); }} />
+                          <FiTrash2 size={18} color="#FD441B" cursor="pointer" title="Excluir Unidade" onClick={() => handleDeleteSec(nomeSec)} />
                         </div>
                       </>
                     )}
                   </div>
 
-                  {/* Tabela de Departamentos dentro do Bloco */}
+                  {/* Tabela de Departamentos */}
                   <table style={{ margin: 0, width: '100%' }}>
+                    <thead>
+                        <tr style={{ background: '#f8f8f8' }}>
+                            <th style={{ textAlign: 'left', padding: '8px' }}>Departamento</th>
+                            <th style={{ textAlign: 'right', padding: '8px', width: '80px' }}>Ações</th>
+                        </tr>
+                    </thead>
                     <tbody>
                       {setoresAgrupados[nomeSec].map((item) => (
-                        <tr key={item.id}>
+                        <tr key={item.id} style={{ borderBottom: '1px solid #eee' }}>
                           <td style={cellTextStyle}>
                             {editandoId === item.id ? (
-                              <input type="text" value={novoNomeDep} onChange={(e) => setNovoNomeDep(e.target.value)} style={{ marginBottom: 0, padding: '4px' }} />
+                              <input type="text" value={novoNomeDep} onChange={(e) => setNovoNomeDep(e.target.value)} style={{ marginBottom: 0, padding: '5px' }} />
                             ) : item.departamento}
                           </td>
-                          <td style={{ width: '70px', textAlign: 'right' }}>
+                          <td style={{ textAlign: 'right', padding: '8px' }}>
                             {editandoId === item.id ? (
                               <div style={{ display: 'flex', gap: '5px', justifyContent: 'flex-end' }}>
-                                <FiCheck size={16} color="green" cursor="pointer" onClick={() => handleUpdateDep(item.id)} />
-                                <FiX size={16} color="gray" cursor="pointer" onClick={() => setEditandoId(null)} />
+                                <FiCheck size={18} color="green" cursor="pointer" onClick={() => handleUpdateDep(item.id)} />
+                                <FiX size={18} color="gray" cursor="pointer" onClick={() => setEditandoId(null)} />
                               </div>
                             ) : (
-                              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                                <FiEdit2 size={14} color="#F6A935" cursor="pointer" onClick={() => { setEditandoId(item.id); setNovoNomeDep(item.departamento); }} />
-                                <FiTrash2 size={14} color="#FD441B" cursor="pointer" onClick={() => deleteDoc(doc(db, 'setores', item.id)).then(() => loadSetores())} />
+                              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                                <FiEdit2 size={15} color="#F6A935" cursor="pointer" title="Editar" onClick={() => { setEditandoId(item.id); setNovoNomeDep(item.departamento); }} />
+                                <FiTrash2 size={15} color="#FD441B" cursor="pointer" title="Excluir" onClick={() => deleteDoc(doc(db, 'setores', item.id)).then(() => loadSetores())} />
                               </div>
                             )}
                           </td>
