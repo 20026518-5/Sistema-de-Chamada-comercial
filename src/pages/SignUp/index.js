@@ -17,24 +17,23 @@ export default function SignUp() {
 
   // Busca as secretarias e departamentos cadastrados pelo Admin no Firestore
   useEffect(() => {
-    async function getSetores() {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'setores'));
-        let lista = [];
-        querySnapshot.forEach(doc => {
-          lista.push({
-            id: doc.id,
-            ...doc.data()
-          });
-        });
-        setListaSetores(lista);
-      } catch (error) {
-        console.log("Erro ao buscar setores: ", error);
-      }
+   async function getSetores() {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'setores'));
+      let lista = [];
+      querySnapshot.forEach(doc => {
+        lista.push({ id: doc.id, ...doc.data() });
+      });
+      
+      console.log("SETORES BUSCADOS:", lista); // Adicione este log para testar
+      setListaSetores(lista);
+    } catch (error) {
+      console.log("ERRO AO BUSCAR SETORES NO SIGNUP: ", error);
     }
+  }
 
-    getSetores();
-  }, []);
+  getSetores();
+}, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
