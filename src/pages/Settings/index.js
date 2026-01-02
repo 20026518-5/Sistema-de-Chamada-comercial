@@ -114,61 +114,74 @@ export default function Settings() {
       <div className="content">
         <Title name="Configurações de Setores"><FiSettings size={25} /></Title>
 
-        {/* Container Flex para os dois blocos principais */}
-        <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-          
-          {/* BLOCO 1: CADASTRO (Lado Esquerdo) */}
-          <div className="container" style={{ flex: '1', minWidth: '320px', margin: 0 }}>
-            <h2 style={{ marginBottom: '15px', fontSize: '1.1em' }}>Novo Cadastro</h2>
-            <div className="form-profile">
-              <label>Nome da Unidade</label>
-              <input type="text" value={secretaria} onChange={(e) => setSecretaria(e.target.value)} placeholder="Ex: Secretaria de Saúde" />
-              
-              <div style={{ marginTop: '10px' }}>
-                <label>Departamentos</label>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <input type="text" value={departamentoInput} onChange={(e) => setDepartamentoInput(e.target.value)} style={{ flex: 1, marginBottom: 0 }} placeholder="Adicionar departamento" />
-                  <button onClick={(e) => { e.preventDefault(); if(departamentoInput) { setListaDepartamentos([...listaDepartamentos, departamentoInput]); setDepartamentoInput(''); } }} style={{ width: '40px', height: '40px', backgroundColor: '#181c2e' }}>
-                    <FiPlus size={18} color="#FFF" />
-                  </button>
-                </div>
-              </div>
-
-              {listaDepartamentos.length > 0 && (
-                <div style={{ marginTop: '10px', padding: '10px', background: '#eee', borderRadius: '4px', maxHeight: '150px', overflowY: 'auto' }}>
-                  {listaDepartamentos.map((dep, i) => (
-                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid #ddd' }}>
-                      <span style={{ fontSize: '0.85em' }}>{dep}</span>
-                      <FiX color="red" cursor="pointer" onClick={() => setListaDepartamentos(listaDepartamentos.filter((_, idx) => idx !== i))} />
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              <button onClick={handleSaveAll} style={{ marginTop: '15px', backgroundColor: '#1fcc44', padding: '10px' }}>Salvar Unidade</button>
-            </div>
-          </div>
-
-          {/* BLOCO 2: LISTAGEM (Lado Direito) */}
-          <div className="container" style={{ flex: '2', minWidth: '450px', margin: 0, maxHeight: '80vh', overflowY: 'auto' }}>
-            <h2 style={{ marginBottom: '15px', fontSize: '1.1em' }}><FiList size={18} style={{ marginRight: 8 }} /> Unidades Cadastradas</h2>
+        {/* BLOCO DE CADASTRO - LARGURA TOTAL NO TOPO */}
+        <div className="container">
+          <div className="form-profile">
+            <h2 style={{ marginBottom: '15px', fontSize: '1.2em' }}>Cadastrar Unidade</h2>
+            <label>Nome da Unidade (Secretaria/Autarquia)</label>
+            <input type="text" value={secretaria} onChange={(e) => setSecretaria(e.target.value)} placeholder="Ex: Secretaria de Saúde" />
             
-            {loading ? <span>Carregando...</span> : Object.keys(setoresAgrupados).length === 0 ? <span>Nenhum registro.</span> : 
-              Object.keys(setoresAgrupados).map((nomeSec) => (
-                <div key={nomeSec} style={{ marginBottom: '20px', background: '#FFF', padding: '12px', borderRadius: '6px', border: '1px solid #ddd' }}>
+            <div style={{ marginTop: '15px' }}>
+              <label>Adicionar Departamentos</label>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <input type="text" value={departamentoInput} onChange={(e) => setDepartamentoInput(e.target.value)} style={{ flex: 1, marginBottom: 0 }} placeholder="Ex: Almoxarifado" />
+                <button onClick={(e) => { e.preventDefault(); if(departamentoInput) { setListaDepartamentos([...listaDepartamentos, departamentoInput]); setDepartamentoInput(''); } }} style={{ width: '50px', height: '43px', backgroundColor: '#181c2e' }}>
+                  <FiPlus size={20} color="#FFF" />
+                </button>
+              </div>
+            </div>
+
+            {listaDepartamentos.length > 0 && (
+              <div style={{ marginTop: '15px', padding: '10px', background: '#f0f4f8', borderRadius: '5px', border: '1px solid #d1d9e0' }}>
+                <p><strong>Aguardando salvamento:</strong></p>
+                {listaDepartamentos.map((dep, i) => (
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid #e1e4e8' }}>
+                    <span style={{ fontSize: '0.9em' }}>{dep}</span>
+                    <FiX color="red" cursor="pointer" onClick={() => setListaDepartamentos(listaDepartamentos.filter((_, idx) => idx !== i))} />
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            <button onClick={handleSaveAll} style={{ marginTop: '20px', backgroundColor: '#1fcc44' }}>Cadastrar Tudo</button>
+          </div>
+        </div>
+
+        {/* SEÇÃO DE LISTAGEM - ORGANIZADA EM DUAS COLUNAS */}
+        <div className="container">
+          <Title name="Unidades Cadastradas"><FiList size={22} /></Title>
+          
+          {loading ? (
+            <span>Carregando...</span>
+          ) : (
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(45%, 1fr))', 
+              gap: '20px', 
+              marginTop: '20px' 
+            }}>
+              {Object.keys(setoresAgrupados).map((nomeSec) => (
+                <div key={nomeSec} style={{ 
+                  background: '#FFF', 
+                  padding: '15px', 
+                  borderRadius: '8px', 
+                  border: '1px solid #ddd',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                  alignSelf: 'start'
+                }}>
                   
-                  {/* Título da Secretaria Editável */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #181c2e', paddingBottom: '5px', marginBottom: '10px' }}>
+                  {/* Cabeçalho do Bloco */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '2px solid #181c2e', paddingBottom: '8px', marginBottom: '12px' }}>
                     {editandoSec === nomeSec ? (
                       <div style={{ display: 'flex', gap: '5px', flex: 1 }}>
-                        <input type="text" value={novoNomeSec} onChange={(e) => setNovoNomeSec(e.target.value)} style={{ marginBottom: 0, height: '30px' }} />
-                        <button onClick={() => handleUpdateSec(nomeSec)} style={{ background: '#1fcc44', border: 0, borderRadius: '4px' }}><FiCheck color="#FFF" /></button>
-                        <button onClick={() => setEditandoSec(null)} style={{ background: '#999', border: 0, borderRadius: '4px' }}><FiX color="#FFF" /></button>
+                        <input type="text" value={novoNomeSec} onChange={(e) => setNovoNomeSec(e.target.value)} style={{ marginBottom: 0, height: '32px' }} />
+                        <button onClick={() => handleUpdateSec(nomeSec)} style={{ background: '#1fcc44', border: 0, padding: '5px', borderRadius: '4px' }}><FiCheck color="#FFF" /></button>
+                        <button onClick={() => setEditandoSec(null)} style={{ background: '#999', border: 0, padding: '5px', borderRadius: '4px' }}><FiX color="#FFF" /></button>
                       </div>
                     ) : (
                       <>
-                        <h4 style={{ margin: 0, ...cellTextStyle, fontWeight: 'bold' }}>{nomeSec}</h4>
-                        <div style={{ display: 'flex', gap: '12px' }}>
+                        <h3 style={{ margin: 0, fontSize: '1em', ...cellTextStyle, fontWeight: 'bold' }}>{nomeSec}</h3>
+                        <div style={{ display: 'flex', gap: '10px' }}>
                           <FiEdit2 size={16} color="#181c2e" cursor="pointer" onClick={() => { setEditandoSec(nomeSec); setNovoNomeSec(nomeSec); }} />
                           <FiTrash2 size={16} color="#FD441B" cursor="pointer" onClick={() => handleDeleteSec(nomeSec)} />
                         </div>
@@ -176,19 +189,19 @@ export default function Settings() {
                     )}
                   </div>
 
-                  {/* Tabela Interna compacta */}
-                  <table style={{ margin: 0, fontSize: '0.85em' }}>
+                  {/* Tabela de Departamentos dentro do Bloco */}
+                  <table style={{ margin: 0, width: '100%' }}>
                     <tbody>
                       {setoresAgrupados[nomeSec].map((item) => (
                         <tr key={item.id}>
                           <td style={cellTextStyle}>
                             {editandoId === item.id ? (
-                              <input type="text" value={novoNomeDep} onChange={(e) => setNovoNomeDep(e.target.value)} style={{ marginBottom: 0, height: '25px' }} />
+                              <input type="text" value={novoNomeDep} onChange={(e) => setNovoNomeDep(e.target.value)} style={{ marginBottom: 0, padding: '4px' }} />
                             ) : item.departamento}
                           </td>
-                          <td style={{ width: '80px', textAlign: 'right' }}>
+                          <td style={{ width: '70px', textAlign: 'right' }}>
                             {editandoId === item.id ? (
-                              <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
+                              <div style={{ display: 'flex', gap: '5px', justifyContent: 'flex-end' }}>
                                 <FiCheck size={16} color="green" cursor="pointer" onClick={() => handleUpdateDep(item.id)} />
                                 <FiX size={16} color="gray" cursor="pointer" onClick={() => setEditandoId(null)} />
                               </div>
@@ -204,11 +217,10 @@ export default function Settings() {
                     </tbody>
                   </table>
                 </div>
-              ))
-            }
-          </div>
-
-        </div> {/* Fim do Flex Container */}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
