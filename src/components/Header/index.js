@@ -1,43 +1,50 @@
 import { useContext } from 'react';
-import avatarImg from '../../assets/avatar.png';
-import { Link } from 'react-router-dom';
+import avatarImg from '../../assets/avatar.png';   
 import { AuthContext } from '../../contexts/auth';
-import { FiHome, FiUser, FiSettings, FiUsers } from 'react-icons/fi'; // Adicionado FiUsers aqui
+import { FiHome, FiSettings, FiUser, FiLogOut, FiUsers } from 'react-icons/fi'; // Importação corrigida
+import { Link } from 'react-router-dom';
 import './header.css';
 
-export default function Header(){
-  const { user } = useContext(AuthContext);
+export default function Header() {
+  const { user, logOut } = useContext(AuthContext);
 
-  return(
-    <div className="sidebar">
+  return (
+    <div className='sidebar'>
       <div>
-        <img src={user.avatarUrl === null ? avatarImg : user.avatarUrl} alt="Foto do usuario" />
+        <img src={user.avatarUrl === null ? avatarImg : user.avatarUrl} alt='foto do usuario' />
       </div>
-
-      <Link to="/dashboard">
-        <FiHome color="#FFF" size={24} />
+      
+      {/* 1. Chamados */}
+      <Link to='/dashboard'>
+        <FiHome color='#fff' size={24} />
         Chamados
       </Link>
 
-      {/* Aba Servidores (Antiga Clientes) visível para todos ou apenas Adm conforme sua regra */}
-      <Link to="/servidores">
-        <FiUsers color="#FFF" size={24} />
+      {/* 2. Servidores (Ajustado conforme sua solicitação anterior) */}
+      <Link to='/servidores'>
+        <FiUsers color='#fff' size={24} />
         Servidores
       </Link>
 
-      <Link to="/profile">
-        <FiUser color="#FFF" size={24} />
+      {/* 3. Perfil (Usando ícone de usuário para evitar confusão) */}
+      <Link to='/profile'>
+        <FiUser color='#fff' size={24} />
         Perfil
       </Link>
 
-      {/* Rota de configurações para o ADM */}
+      {/* 4. Configurações de Setores (Apenas para Admin) */}
       {user.isadm && (
-        <Link to="/settings">
-          <FiSettings color="#FFF" size={24} />
+        <Link to='/settings'>
+          <FiSettings color='#fff' size={24} />
           Configurações
         </Link>
       )}
 
+      {/* 5. Botão de Sair */}
+      <button onClick={() => logOut()} className="logout-btn" style={{ background: 'transparent', border: 0, display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+        <FiLogOut color='#fff' size={24} />
+        <span style={{ color: '#FFF', marginLeft: '0.7em', fontSize: '1.1em' }}>Sair</span>
+      </button>
     </div>
   )
 }
