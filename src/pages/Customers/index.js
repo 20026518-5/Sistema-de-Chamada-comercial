@@ -1,127 +1,214 @@
-import { useState } from "react";
-import { FiUser } from "react-icons/fi";
-import { toast } from "react-toastify";
-import Header from "../../components/Header";
-import Title from "../../components/Title";
-import { db } from "../../services/firebaseConnection";
-import { 
-  addDoc, 
-  collection, 
-  doc, 
-  updateDoc, 
-  writeBatch, 
-  query, 
-  where, 
-  getDocs 
-} from "firebase/firestore"; // Importação das ferramentas de sincronização
+import { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../contexts/auth';
+import { db } from '../../services/firebaseConnection';
+import { collection, getDocs, doc, updateDoc, query, where } from 'firebase/firestore';
+import Header from '../../components/Header';
+import Title from '../../components/Title';
+import { FiUsers, FiSearch, FiEdit2, FiCheck, FiX } from 'react-icons/fi';
+import { toast } from 'react-toastify';
 
-export default function Customers() {
-  const [nome, setNome] = useState('');
-  const [cnpj, setCnpj] = useState('');
-  const [endereco, setEndereco] = useState('');
+export default function Servidores() {
+  const { user } = useContext(AuthContext);
+  const [usuarios, setUsuarios] = useState([]);
+  const [listaSetores, setListaSetores] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Função original para cadastrar novo cliente
-  const handleRegister = async (e) => {
-    e.preventDefault();
+  // Estados dos Filtros
+  const [buscaNome, setBuscaNome] = useState('');
+  const [filtroSecretaria, setFiltroSecretaria] = useState('');
+  const [filtroDepartamento, setFiltroDepartamento] = useState('');
 
-    if (nome !== '' && cnpj !== '' && endereco !== '') {
-      await addDoc(collection(db, 'customers'), {
-        nomeEmpresa: nome,
-        cnpj: cnpj,
-        endereço: endereco,
-      })
-      .then(() => {
-        setNome('');
-        setCnpj('');
-        setEndereco('');
-        toast.success('Cliente Cadastrado com sucesso');
-      })
-      .catch((error) => {
+  // Estado de Edição
+  const [editandoId, setEditandoId] = useState(null);
+  const [editNome, setEditNome] = useState('');
+  const [editSec, setEditSec] = useState('');
+  const [editDep, setEditDep] = useState('');
+
+  // Bloqueio de segurança: Se não for ADM, não renderiza a página
+  if (!user.isadm) {
+    return (
+      <div>
+        <Header />
+        <div className="content">
+          <div className="container">
+            <span>Acesso negado. Apenas administradores podem ver esta página.</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  useEffect(() => {
+    async function loadDados() {
+      try {
+        // Busca Usuários
+        const userSnapshot = await getDocs(collection(db, 'users'));
+        let listUsers = [];
+        userSnapshot.forEach((doc) => {
+          listUsers.push({ id: doc.id, ...doc.data() });
+        });
+        setUsuarios(listUsers);
+
+        // Busca Setores para os filtros (igual ao SignUp)
+        const setorSnapshot = await getDocs(collection(db, 'setores'));
+        let listSetores = [];
+        setorSnapshot.forEach((doc) => {
+          listSetores.push({ id: doc.id, ...doc.data() });
+        });
+        setListaSetores(listSetores);
+
+      } catch (error) {
         console.log(error);
-        toast.error('Erro ao cadastrar');
-      });
-    } else {
-      toast.info('Complete todos os campos!');
+        toast.error("Erro ao carregar dados.");
+      } finally {
+        setLoading(false);
+      }
     }
-  }
+    loadDados();
+  }, []);
 
-  /**
-   * MELHORIA: Sincronização de Dados (Desnormalização)
-   * Esta função deve ser chamada em um cenário de EDIÇÃO de cliente.
-   * Ela utiliza writeBatch para garantir que a atualização seja atômica (tudo ou nada).
-   */
-  async function handleUpdateCustomer(id, novoNome, novoCnpj, novoEndereco) {
-    const batch = writeBatch(db); // Inicializa o lote de operações
-    
-    // 1. Referência do documento do cliente e preparação da atualização básica
-    const customerRef = doc(db, "customers", id);
-    batch.update(customerRef, { 
-      nomeEmpresa: novoNome,
-      cnpj: novoCnpj,
-      endereço: novoEndereco
-    });
-
-    // 2. Busca todos os chamados vinculados a este cliente (clienteId)
-    // Isso resolve o problema do nome da empresa ficar desatualizado nos chamados antigos
-    const chamadosRef = collection(db, "chamados");
-    const q = query(chamadosRef, where("clienteId", "==", id));
-    
+  async function handleSaveEdit(id) {
+    if(!editNome || !editSec || !editDep) return toast.warning("Preencha todos os campos.");
     try {
-      const snapshot = await getDocs(q);
-
-      snapshot.forEach((docItem) => {
-        const chamadoRef = doc(db, "chamados", docItem.id);
-        // Adiciona a atualização do nome do cliente no lote para cada chamado encontrado
-        batch.update(chamadoRef, { cliente: novoNome });
+      await updateDoc(doc(db, 'users', id), {
+        nome: editNome,
+        secretaria: editSec,
+        departamento: editDep
       });
-
-      // 3. Executa todas as operações (Update do cliente + Updates dos chamados) simultaneamente
-      await batch.commit();
-      toast.success("Cliente e chamados sincronizados com sucesso!");
+      toast.success("Servidor atualizado!");
+      
+      // Atualiza a lista local
+      setUsuarios(usuarios.map(u => u.id === id ? { ...u, nome: editNome, secretaria: editSec, departamento: editDep } : u));
+      setEditandoId(null);
     } catch (error) {
-      console.log("Erro ao sincronizar:", error);
-      toast.error("Erro ao atualizar dados vinculados.");
+      toast.error("Erro ao atualizar.");
     }
   }
+
+  const secretariasUnicas = [...new Set(listaSetores.map(s => s.secretaria))];
+
+  // Lógica de Filtragem em Tempo Real
+  const usuariosFiltrados = usuarios.filter(u => {
+    return (
+      u.nome.toLowerCase().includes(buscaNome.toLowerCase()) &&
+      (filtroSecretaria === '' || u.secretaria === filtroSecretaria) &&
+      (filtroDepartamento === '' || u.departamento === filtroDepartamento)
+    );
+  });
 
   return (
     <div>
       <Header />
-    
       <div className="content">
-        <Title name='Clientes'>
-          <FiUser size={25} />
+        <Title name="Consulta de Servidores">
+          <FiUsers size={25} />
         </Title>
-      
+
+        {/* --- BLOCO DE PESQUISA E FILTROS --- */}
         <div className="container">
-          <form className="form-profile" onSubmit={handleRegister}>
-          
-            <label>Nome do Cliente</label>
-            <input 
-              type='text'
-              placeholder="Nome da Empresa" 
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-            />
+          <div className="form-profile" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
+            <div>
+              <label>Pesquisar por Nome</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <input 
+                  type="text" 
+                  placeholder="Nome do servidor..." 
+                  value={buscaNome}
+                  onChange={(e) => setBuscaNome(e.target.value)}
+                  style={{ marginBottom: 0 }}
+                />
+              </div>
+            </div>
 
-            <label>CNPJ</label>
-            <input 
-              type='text' 
-              placeholder="Digite o CNPJ"
-              value={cnpj}
-              onChange={(e) => setCnpj(e.target.value)}
-            />
+            <div>
+              <label>Filtrar Secretaria</label>
+              <select value={filtroSecretaria} onChange={(e) => { setFiltroSecretaria(e.target.value); setFiltroDepartamento(''); }}>
+                <option value="">Todas as Secretarias</option>
+                {secretariasUnicas.map(sec => <option key={sec} value={sec}>{sec}</option>)}
+              </select>
+            </div>
 
-            <label>Endereço</label>
-            <input 
-              type='text' 
-              placeholder="Endereço da Empresa"
-              value={endereco}
-              onChange={(e) => setEndereco(e.target.value)}
-            />
+            <div>
+              <label>Filtrar Departamento</label>
+              <select 
+                value={filtroDepartamento} 
+                onChange={(e) => setFiltroDepartamento(e.target.value)}
+                disabled={!filtroSecretaria}
+              >
+                <option value="">Todos os Departamentos</option>
+                {listaSetores
+                  .filter(s => s.secretaria === filtroSecretaria)
+                  .map(item => <option key={item.id} value={item.departamento}>{item.departamento}</option>)
+                }
+              </select>
+            </div>
+          </div>
+        </div>
 
-            <button type="submit">Salvar</button>
-          </form>
+        {/* --- LISTAGEM DE RESULTADOS --- */}
+        <div className="container">
+          {loading ? (
+            <span>Carregando servidores...</span>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Nome</th>
+                  <th scope="col">Secretaria</th>
+                  <th scope="col">Departamento</th>
+                  <th scope="col" style={{ width: '100px' }}>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {usuariosFiltrados.map((item) => (
+                  <tr key={item.id}>
+                    <td data-label="Nome">
+                      {editandoId === item.id ? (
+                        <input type="text" value={editNome} onChange={(e) => setEditNome(e.target.value)} style={{ marginBottom: 0 }} />
+                      ) : item.nome}
+                    </td>
+                    <td data-label="Secretaria">
+                      {editandoId === item.id ? (
+                        <select value={editSec} onChange={(e) => { setEditSec(e.target.value); setEditDep(''); }}>
+                          {secretariasUnicas.map(sec => <option key={sec} value={sec}>{sec}</option>)}
+                        </select>
+                      ) : item.secretaria}
+                    </td>
+                    <td data-label="Departamento">
+                      {editandoId === item.id ? (
+                        <select value={editDep} onChange={(e) => setEditDep(e.target.value)}>
+                          {listaSetores.filter(s => s.secretaria === editSec).map(s => (
+                            <option key={s.id} value={s.departamento}>{s.departamento}</option>
+                          ))}
+                        </select>
+                      ) : item.departamento}
+                    </td>
+                    <td data-label="Ações">
+                      {editandoId === item.id ? (
+                        <div style={{ display: 'flex', gap: '5px' }}>
+                          <button className="action" style={{ backgroundColor: '#1fcc44' }} onClick={() => handleSaveEdit(item.id)}><FiCheck size={15} color="#FFF" /></button>
+                          <button className="action" style={{ backgroundColor: '#999' }} onClick={() => setEditandoId(null)}><FiX size={15} color="#FFF" /></button>
+                        </div>
+                      ) : (
+                        <button 
+                          className="action" 
+                          style={{ backgroundColor: '#F6A935' }}
+                          onClick={() => {
+                            setEditandoId(item.id);
+                            setEditNome(item.nome);
+                            setEditSec(item.secretaria);
+                            setEditDep(item.departamento);
+                          }}
+                        >
+                          <FiEdit2 size={15} color="#FFF" />
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>
