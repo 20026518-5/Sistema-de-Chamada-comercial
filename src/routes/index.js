@@ -18,7 +18,7 @@ function RoutesApp(){
 
       <Route path="/dashboard" element={ <Private><Dashboard/></Private> } />
       <Route path="/profile" element={ <Private><Profile/></Private> } />
-      <Route path="/customers" element={ <Private><Customers/></Private> } />
+      <Route path="/servidores" element={ <Private><Customers/></Private> } />
       <Route path="/new" element={ <Private><New/></Private> } />
       <Route path="/new/:id" element={ <Private><New/></Private> } />
       
