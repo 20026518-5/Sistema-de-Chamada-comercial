@@ -1,15 +1,36 @@
-*{
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
+/* Tema Padrão (Claro) */
+:root {
+  --primary-bg: #f8f8f8;
+  --sidebar-bg: #181c2e;
+  --container-bg: #FFF;
+  --text-color: #000;
+  --input-bg: #FFF;
+  --accent-color: #181c2e;
 }
 
-html, body, #root {
-  height: 100%;
+/* Tema Escuro */
+[data-theme='dark'] {
+  --primary-bg: #121212;
+  --sidebar-bg: #000000;
+  --container-bg: #1e1e1e;
+  --text-color: #E0E0E0;
+  --input-bg: #333;
+  --accent-color: #444;
 }
 
+/* Tema Verde Jade */
+[data-theme='jade'] {
+  --primary-bg: #e0f2f1; /* Verde bem clarinho para o fundo */
+  --sidebar-bg: #004d40; /* Verde Jade escuro */
+  --container-bg: #ffffff;
+  --text-color: #00241a;
+  --input-bg: #f1f8f7;
+  --accent-color: #00796b;
+}
+
+/* Aplicação Global básica */
 body {
-  font:14px;
-  background-color:#fff;
-  font-family: sans-serif;
+  background-color: var(--primary-bg);
+  color: var(--text-color);
+  transition: background 0.3s, color 0.3s;
 }
