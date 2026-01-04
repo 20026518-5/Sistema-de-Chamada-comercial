@@ -1,39 +1,70 @@
 .sidebar {
   margin: 0;
   padding: 0;
-  background-color: var(--sidebar-bg); /* Variável */
+  background-color: var(--sidebar-bg);
   position: fixed;
   height: 100vh;
   overflow: auto;
   width: 200px;
   transition: background 0.3s;
+  z-index: 99;
 }
 
 .sidebar div {
   background: url('../../assets/cover.png');
-  background-color: var(--sidebar-bg); /* Variável */
+  background-color: var(--sidebar-bg);
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  height: 150px;
-  padding-top: 35px;
+  height: 130px; /* Reduzido de 150px para evitar sobreposição */
+  padding-top: 25px;
+  margin-bottom: 10px; /* Espaço extra antes dos botões */
+}
+
+.sidebar div img {
+  height: 75px; /* Reduzido de 90px */
+  width: 75px; /* Reduzido de 90px */
+  display: block;
+  margin: auto;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255,255,255,0.2);
 }
 
 .sidebar a, .logout-btn {
   display: flex;
   align-items: center;
-  padding: 17px;
+  padding: 15px; /* Ajuste fino no padding */
   text-decoration: none;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--sidebar-text); /* Agora usa variável para contraste */
   transition: ease-in-out 0.4s;
+  font-weight: 500;
 }
 
 .sidebar a:hover, .logout-btn:hover {
-  background-color: rgba(0,0,0,0.2);
-  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--sidebar-text-hover);
+}
+
+.sidebar a svg, .logout-btn svg {
+  margin-right: 0.8rem;
 }
 
 .content {
   margin-left: 200px;
   padding: 1px 16px;
+}
+
+/* Ajuste Mobile */
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .sidebar div { display: none; }
+  .content { margin-left: 0; }
 }
