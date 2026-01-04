@@ -24,15 +24,34 @@ export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
   const [details, setDetails] = useState({});
 
+  // Novos estados para Filtros de Admin
+  const [filtroSecretaria, setFiltroSecretaria] = useState('');
+  const [filtroStatus, setFiltroStatus] = useState('');
+  const [listaSecretarias, setListaSecretarias] = useState([]);
+
   useEffect(() => {
+    // Carrega a lista de secretarias disponíveis para o filtro do Admin
+    async function loadFiltros() {
+      const setoresRef = collection(db, 'setores');
+      const snapshot = await getDocs(setoresRef);
+      let lista = [];
+      snapshot.forEach((doc) => {
+        lista.push(doc.data().secretaria);
+      });
+      // Remove duplicatas
+      setListaSecretarias([...new Set(lista)]);
+    }
+
     async function loadChamados() {
       try {
-        let q;
+        let q = listRef;
+
         if (!user?.isadm) {
-          q = query(listRef, where('userId', '==', user.uid), orderBy('created', 'desc'), limit(5));
-        } else {
-          q = query(listRef, orderBy('created', 'desc'), limit(5));
+          // Usuário comum vê apenas seus chamados
+          q = query(q, where('userId', '==', user.uid));
         }
+
+        q = query(q, orderBy('created', 'desc'), limit(5));
 
         const querySnapshot = await getDocs(q);
         setChamados([]); 
@@ -45,8 +64,46 @@ export default function Dashboard() {
       }
     }
 
-    if (user) loadChamados();
+    if (user) {
+      loadChamados();
+      if(user.isadm) loadFiltros();
+    }
   }, [user]);
+
+  // Função para aplicar os filtros de busca (Admin)
+  async function handleSearch(e) {
+    e.preventDefault();
+    setLoading(true);
+    setChamados([]);
+    setIsEmpty(false);
+    
+    try {
+      let q = listRef;
+
+      if (!user?.isadm) {
+        q = query(q, where('userId', '==', user.uid));
+      } else {
+        // Aplica filtros se existirem
+        if (filtroSecretaria !== '') {
+          q = query(q, where('secretaria', '==', filtroSecretaria));
+        }
+        if (filtroStatus !== '') {
+          q = query(q, where('status', '==', filtroStatus));
+        }
+      }
+
+      q = query(q, orderBy('created', 'desc'), limit(5));
+
+      const querySnapshot = await getDocs(q);
+      await updateState(querySnapshot);
+
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao filtrar chamados.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const updateState = async (querySnapshot) => {
     const isCollectionEmpty = (querySnapshot.size === 0);
@@ -58,6 +115,8 @@ export default function Dashboard() {
           id: doc.id,
           ...data,
           createdFormat: data.created ? format(data.created.toDate(), 'dd/MM/yyyy') : '---',
+          // Prepara data de atualização para auditoria se existir
+          updatedFormat: data.updatedAt ? format(data.updatedAt.toDate(), 'dd/MM/yyyy HH:mm') : null
         })
       })
       setChamados((chamados) => [...chamados, ...list]);
@@ -70,12 +129,17 @@ export default function Dashboard() {
 
   const handleMore = async () => {
     setLoadMore(true);
-    let q;
+    let q = listRef;
+    
     if (!user.isadm) {
-      q = query(listRef, where('userId', '==', user.uid), orderBy('created','desc'), startAfter(lastDoc), limit(5));
+      q = query(q, where('userId', '==', user.uid));
     } else {
-      q = query(listRef, orderBy('created','desc'), startAfter(lastDoc), limit(5));
+      if (filtroSecretaria !== '') q = query(q, where('secretaria', '==', filtroSecretaria));
+      if (filtroStatus !== '') q = query(q, where('status', '==', filtroStatus));
     }
+
+    q = query(q, orderBy('created','desc'), startAfter(lastDoc), limit(5));
+    
     const querySnapshot = await getDocs(q);
     await updateState(querySnapshot);
   }
@@ -108,15 +172,51 @@ export default function Dashboard() {
       <div className='content'>
         <Title name='Chamados'><FiMessageSquare size={25}/></Title>
       
-        {!user.isadm && (
-          <Link to='/new' className="new">
-            <FiPlus size={25} color='#fff'/>
-            Novo chamado
-          </Link>
-        )}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '15px', marginBottom: '1.5em' }}>
+          
+          {/* BLOCO DE FILTROS (Apenas para Admin) */}
+          {user.isadm ? (
+            <form onSubmit={handleSearch} style={{ display: 'flex', gap: '10px', flex: 1, minWidth: '300px' }}>
+              <select 
+                value={filtroSecretaria} 
+                onChange={(e) => setFiltroSecretaria(e.target.value)}
+                style={{ flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid var(--border-color)', backgroundColor: 'var(--container-bg)', color: 'var(--text-color)' }}
+              >
+                <option value="">Todas Secretarias</option>
+                {listaSecretarias.map(sec => (
+                  <option key={sec} value={sec}>{sec}</option>
+                ))}
+              </select>
+
+              <select 
+                value={filtroStatus} 
+                onChange={(e) => setFiltroStatus(e.target.value)}
+                style={{ flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid var(--border-color)', backgroundColor: 'var(--container-bg)', color: 'var(--text-color)' }}
+              >
+                <option value="">Todos Status</option>
+                <option value="Em aberto">Em aberto</option>
+                <option value="Em progresso">Em progresso</option>
+                <option value="atendido">Atendido</option>
+              </select>
+
+              <button type="submit" style={{ backgroundColor: 'var(--sidebar-bg)', color: '#FFF', border: 0, padding: '8px 15px', borderRadius: '4px', cursor: 'pointer' }}>
+                <FiSearch size={18} />
+              </button>
+            </form>
+          ) : (
+            <div></div> /* Espaçador para manter o botão "Novo chamado" à direita */
+          )}
+
+          {!user.isadm && (
+            <Link to='/new' className="new" style={{ margin: 0 }}>
+              <FiPlus size={25} color='#fff'/>
+              Novo chamado
+            </Link>
+          )}
+        </div>
       
         {chamados.length === 0 ? (
-          <div className="container dashboard"><span>Nenhum chamado registrado...</span></div>
+          <div className="container dashboard"><span>Nenhum chamado encontrado...</span></div>
         ) : (
           <>
             <table>
@@ -147,16 +247,15 @@ export default function Dashboard() {
                     )}
                     <td data-label='Assunto'>{item.assunto}</td>
                     <td data-label='Status'>
-                      {/* Corrigido: Status 'atendido' ou 'Em progresso' com cor cinza mais legível em temas escuros */}
                       <span className="badge" style={{backgroundColor: item.status === 'Em aberto' ? '#5CB85C' : '#999'}}>
                         {item.status}
                       </span>
                     </td>
                     <td data-label='Data'>{item.createdFormat}</td>
                     <td data-label='Ações'>
-                      <button onClick={() => toggleModal(item)} className="action" style={{backgroundColor:'#3583f6'}}><FiSearch size={17} color='#fff' /></button>
-                      <Link className="action" style={{backgroundColor:'#f6a935'}} to={`/new/${item.id}`}><FiEdit2 size={17} color='#fff'/></Link>
-                      <button onClick={() => handleDelete(item)} className="action" style={{backgroundColor:'#FD441B'}}><FiDelete size={17} color='#fff' /></button>
+                      <button onClick={() => toggleModal(item)} className="action" style={{backgroundColor:'#3583f6'}} title="Visualizar Detalhes"><FiSearch size={17} color='#fff' /></button>
+                      <Link className="action" style={{backgroundColor:'#f6a935'}} to={`/new/${item.id}`} title="Editar Chamado"><FiEdit2 size={17} color='#fff'/></Link>
+                      <button onClick={() => handleDelete(item)} className="action" style={{backgroundColor:'#FD441B'}} title="Excluir Chamado"><FiDelete size={17} color='#fff' /></button>
                     </td>
                   </tr>
                 ))}
