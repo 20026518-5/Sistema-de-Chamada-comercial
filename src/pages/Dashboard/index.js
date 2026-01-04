@@ -28,11 +28,9 @@ export default function Dashboard() {
     async function loadChamados() {
       try {
         let q;
-        // Se NÃO for admin, filtra apenas os chamados do usuário logado
         if (!user?.isadm) {
           q = query(listRef, where('userId', '==', user.uid), orderBy('created', 'desc'), limit(5));
         } else {
-          // Se for admin, busca todos os chamados globalmente
           q = query(listRef, orderBy('created', 'desc'), limit(5));
         }
 
@@ -88,7 +86,6 @@ export default function Dashboard() {
   }
 
   const handleDelete = async (item) => {
-    // Regra: usuário comum só apaga em 15min. Admin apaga sempre.
     const diferencaMinutos = (new Date() - item.created.toDate()) / (1000 * 60);
     if (!user.isadm && diferencaMinutos > 15) {
       toast.error('O prazo de 15 minutos expirou.');
@@ -111,7 +108,6 @@ export default function Dashboard() {
       <div className='content'>
         <Title name='Chamados'><FiMessageSquare size={25}/></Title>
       
-        {/* SÓ APARECE PARA USUÁRIO COMUM */}
         {!user.isadm && (
           <Link to='/new' className="new">
             <FiPlus size={25} color='#fff'/>
@@ -136,7 +132,7 @@ export default function Dashboard() {
                   <th scope="col">Assunto</th>
                   <th scope="col">Status</th>
                   <th scope="col">Data</th>
-                  <th scope="col">#</th>
+                  <th scope="col">Ações</th>
                 </tr>
               </thead>
               <tbody>         
@@ -151,12 +147,13 @@ export default function Dashboard() {
                     )}
                     <td data-label='Assunto'>{item.assunto}</td>
                     <td data-label='Status'>
-                      <span className="badge" style={{backgroundColor: item.status === 'Em aberto' ? '#5CB85C' : '#ccc'}}>
+                      {/* Corrigido: Status 'atendido' ou 'Em progresso' com cor cinza mais legível em temas escuros */}
+                      <span className="badge" style={{backgroundColor: item.status === 'Em aberto' ? '#5CB85C' : '#999'}}>
                         {item.status}
                       </span>
                     </td>
                     <td data-label='Data'>{item.createdFormat}</td>
-                    <td data-label='#'>
+                    <td data-label='Ações'>
                       <button onClick={() => toggleModal(item)} className="action" style={{backgroundColor:'#3583f6'}}><FiSearch size={17} color='#fff' /></button>
                       <Link className="action" style={{backgroundColor:'#f6a935'}} to={`/new/${item.id}`}><FiEdit2 size={17} color='#fff'/></Link>
                       <button onClick={() => handleDelete(item)} className="action" style={{backgroundColor:'#FD441B'}}><FiDelete size={17} color='#fff' /></button>
