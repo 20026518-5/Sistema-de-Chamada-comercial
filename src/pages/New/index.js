@@ -78,10 +78,16 @@ export default function New(){
     try {
       if(editId){
         const docRef = doc(db, 'chamados', id);
-        const updateData = {
+        await updateDoc(docRef, {
           assunto: assunto,
           status: status,
           complemento: complemento,
+          updatedBy: user.nome, // Auditoria: Nome de quem alterou
+        updatedAt: new Date()  // Auditoria: Data da alteração
+    });
+  toast.info('Chamado atualizado!');
+  navigate('/dashboard');
+  return;
         };
 
         // Apenas Admin altera o cliente vinculado na edição
