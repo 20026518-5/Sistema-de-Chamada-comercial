@@ -1,94 +1,39 @@
 .container-center {
-  background-color: #121212;
+  height: 100vh; /* Garante altura total */
   display: flex;
-  height: 100%;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  background-color: var(--primary-bg); /* Respeita o tema */
 }
 
 .login {
-  background-color: #EAEAEC;
-  width: 600px;
+  background-color: var(--container-bg);
+  width: 500px; /* Tamanho ideal para login */
+  max-width: 90%; /* Responsivo */
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  padding: 2em; /* Espaçamento interno melhorado */
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-.login-area {
-  background-color: #181C2E;
-  width: 100%;
-  justify-content: center;
+/* Estilo do Seletor no Canto Superior Direito */
+.theme-selector-wrapper {
+  position: absolute;
+  top: 20px;
+  right: 20px;
   display: flex;
-}
-.login-area img{
-  width: 170px;
-  height: 130px;
-  padding: 20px; 
-}
-
-form {
-  display: flex;
-  width: 90%;
   flex-direction: column;
-  margin-top: 1.5rem;
+  align-items: flex-end;
 }
 
-form h1 {
-  text-align: center;
-  margin-bottom: 1rem;
-  color:#181C2E;
-}
-
-form input{
- border-radius: 4px;
- padding: 22px ;
- background-color: #fff;
- margin-bottom: 1rem;
- height: 35px;
- border: 0;
- color: #121212;
- font-size: 15px;
-}
-
-form button {
-  height: 35px;
-  background-color: #181C2E;
-  color: #fff;
-  font-size: 1.3rem;
-  border: 0;
-  padding: 22px; 
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  transition: all 0.5s;
-}
-form button:hover{
-  background-color: rgba(3, 68, 172, 0.768);
-}
-.login a {
-  text-decoration:none;
+.theme-selector-wrapper select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background-color: var(--container-bg);
+  color: var(--text-color);
   cursor: pointer;
-  color: #000;
-  margin:1.5rem 0;
-}
-
-@media screen and (max-width: 620px) {
-  .login{
-    width: 400px;
-  }
-}
-
-@media screen and (max-width: 400px) {
-  .login{
-    width: 330px;
-  }
-}
-
-button {
-  min-height: 44px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
