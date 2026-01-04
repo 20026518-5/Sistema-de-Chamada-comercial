@@ -1,23 +1,23 @@
 .container-center {
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background-color: var(--primary-bg);
-  position: relative; /* Permite o posicionamento absoluto do seletor */
+  display: flex;
+  min-height: 100vh; /* Garante que ocupa a tela toda para centralizar */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
-/* ... restante do código anterior ... */
-
 .login {
-  background-color: #EAEAEC;
-  width: 600px;
+  background-color: var(--container-bg);
+  width: 500px; /* Tamanho ideal para 100% de zoom */
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  border-radius: 8px; /* Garante que o quadro tenha cantos arredondados */
-  overflow: hidden; /* Garante que a faixa azul não ultrapasse os cantos */
+  border-radius: 8px;
+  overflow: hidden; /* Garante que a faixa azul acompanhe o arredondamento */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .login-area {
@@ -25,81 +25,88 @@
   width: 100%;
   justify-content: center;
   display: flex;
+  padding: 10px 0; /* Espaço interno para a faixa azul */
 }
 
 .login-area img {
-  width: 180px;         /* Largura ajustada */
-  height: auto;          /* Altura automática para manter a proporção e não cortar */
-  max-height: 150px;     /* Limite máximo de altura */
-  padding: 15px;         /* Padding reduzido para a imagem aparecer maior */
-  object-fit: contain;   /* Faz com que a imagem caiba inteira no espaço */
+  width: 100%;
+  max-width: 200px;     /* Limite de largura para não ficar gigante */
+  height: auto;          /* Mantém a proporção original */
+  max-height: 140px;     /* Limite de altura para não cortar */
+  object-fit: contain;   /* GARANTE QUE A IMAGEM APAREÇA INTEIRA */
+  display: block;
+  padding: 10px;         /* Espaço para a logo não encostar nas bordas */
 }
 
-/* ... restante do código anterior ... */
+form {
+  display: flex;
+  width: 90%;
+  flex-direction: column;
+  margin-top: 1.5rem;
+}
 
-/* Novo estilo do Seletor Superior Direito */
+form h1 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+form input {
+  border-radius: 4px;
+  padding: 15px; /* Reduzi um pouco para ficar mais elegante */
+  background-color: var(--input-bg);
+  margin-bottom: 1rem;
+  height: 45px;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  font-size: 15px;
+}
+
+form button {
+  height: 45px;
+  background-color: #181C2E;
+  color: #fff;
+  font-size: 1.1rem;
+  border: 0;
+  border-radius: 4px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  font-weight: bold;
+  transition: all 0.5s;
+}
+
+form button:hover {
+  background-color: rgba(3, 68, 172, 0.768);
+}
+
+.login a {
+  text-decoration: none;
+  cursor: pointer;
+  color: var(--text-color);
+  margin: 1.5rem 0;
+  font-size: 0.9em;
+}
+
+/* Responsividade */
+@media screen and (max-width: 620px) {
+  .login { width: 90%; }
+}
+
+/* Seletor de Tema no Canto Superior */
 .theme-selector-wrapper {
   position: absolute;
-  top: 25px;
-  right: 25px;
+  top: 20px;
+  right: 20px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
 }
 
-.theme-selector-wrapper label {
-  font-size: 0.75em;
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: var(--text-color);
-}
-
 .theme-selector-wrapper select {
-  padding: 8px 12px;
+  padding: 5px 10px;
   border-radius: 4px;
   border: 1px solid var(--border-color);
-  background-color: var(--container-bg);
+  background: var(--container-bg);
   color: var(--text-color);
-  cursor: pointer;
-  outline: none;
-}
-
-/* Restante dos estilos de formulário mantidos */
-.login form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.login h1 {
-  text-align: center;
-  margin-bottom: 1em;
-  color: var(--text-color);
-}
-
-.login input {
-  margin-bottom: 15px;
-  height: 45px;
-  border-radius: 7px;
-  border: 1px solid var(--border-color);
-  padding: 10px;
-  font-size: 15px;
-  background-color: var(--input-bg);
-  color: var(--text-color);
-}
-
-.login button {
-  height: 45px;
-  border: 0;
-  border-radius: 7px;
-  background-color: var(--sidebar-bg); /* Cor de destaque segue o tema */
-  color: #FFF;
-  font-size: 1.1em;
-  font-weight: bold;
-}
-
-.login a {
-  margin-top: 1.5em;
-  color: var(--text-color);
-  font-size: 0.9em;
 }
