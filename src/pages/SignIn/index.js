@@ -73,6 +73,10 @@ export default function SignIn() {
           <button type="submit">
             {loadingAuth ? 'Carregando...' : 'Acessar'}
           </button>
+            <button type="submit">{loadingAuth ? 'Carregando...' : 'Acessar'}</button>
+          <button type="button" onClick={handleForgotPassword} style={{ marginTop: 10, background: 'none', border: 0, color: 'var(--text-color)', cursor: 'pointer', fontSize: '0.8em' }}>
+        Esqueci minha senha
+        </button>
         </form>
 
         <Link to="/register">Criar uma conta</Link>
