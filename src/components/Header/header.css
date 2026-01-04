@@ -1,5 +1,5 @@
-.sidebar{
-  margin:  0;
+.sidebar {
+  margin: 0;
   padding: 0;
   background-color: #181c2e;
   position: fixed;
@@ -9,16 +9,16 @@
 }
 
 .sidebar div {
- background:url('../../assets/cover.png');
- background-color: #181c2e;
- background-position: center;
- background-repeat: no-repeat;
- background-size: cover;
- height: 150px;
- padding-top: 35px;
+  background: url('../../assets/cover.png');
+  background-color: #181c2e;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 150px;
+  padding-top: 35px;
 }
 
-.sidebar div img{
+.sidebar div img {
   height: 90px;
   width: 90px;
   display: block;
@@ -29,61 +29,77 @@
   -webkit-filter: drop-shadow(2px 3px 6px #181c2e);
 }
 
-.sidebar a {
-  display: block;
+/* Estilo unificado para Links e o Botão de Sair */
+.sidebar a, .logout-btn {
+  display: flex; /* Mudado de block para flex para alinhar ícone e texto */
+  align-items: center;
   padding: 17px;
   text-decoration: none;
-  display: block;
-  color: rgba(255,255,255,0.7);
-  flex-direction: row;
-  align-items: center;
+  color: rgba(255, 255, 255, 0.7);
   transition: ease-in-out 0.4s;
+  cursor: pointer;
 }
 
-.sidebar a svg {
-  margin-right: 0.5rem;
+/* Específico para o botão de sair para remover estilos padrão de botão */
+.logout-btn {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  font-family: inherit;
+  font-size: 1.1em;
+  text-align: left;
 }
 
-.sidebar a:hover{
+.sidebar a svg, .logout-btn svg {
+  margin-right: 0.7rem;
+}
+
+.sidebar a:hover, .logout-btn:hover {
   background-color: #121212;
   color: #fff;
-
 }
 
-.content{
+.content {
   margin-left: 200px;
   padding: 1px 16px;
 }
 
-@media screen and (max-width:700px){
+/* Responsividade para telas menores que 700px */
+@media screen and (max-width: 700px) {
   .sidebar {
     width: 100%;
     height: auto;
-     position: relative;
+    position: relative;
+    display: flex; /* Organiza os itens horizontalmente no mobile */
+    flex-wrap: wrap;
   }
-  div.content{
+
+  div.content {
     margin-left: 0;
   }
 
-  .sidebar a{
-    float:left;
+  .sidebar a, .logout-btn {
+    flex: 1; /* Divide o espaço entre os botões */
+    justify-content: center;
+    padding: 15px 5px;
   }
 
   .sidebar div {
-    display: none;
+    display: none; /* Esconde a capa/avatar no mobile para ganhar espaço */
   }
 
-  .sidebar a svg {
-    display: none;
+  .sidebar a svg, .logout-btn svg {
+    margin-right: 5px; /* Reduz margem no mobile */
   }
 }
 
-@media screen and (max-width:400){
-  .sidebar a{
-   text-align: center;
-   float: none;
+/* Responsividade para telas muito pequenas (abaixo de 400px) */
+@media screen and (max-width: 400px) {
+  .sidebar a, .logout-btn {
+    font-size: 0.9em;
   }
-  .sidebar a svg{
-    display: none;
+  
+  .sidebar a svg, .logout-btn svg {
+    display: none; /* Esconde ícones para caber apenas o texto se necessário */
   }
 }
