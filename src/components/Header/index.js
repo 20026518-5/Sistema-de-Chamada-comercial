@@ -6,7 +6,8 @@ import { Link } from 'react-router-dom';
 import './header.css';
 
 export default function Header() {
-  const { user, logOut } = useContext(AuthContext);
+  // Alterado de logOut para logout (minúsculo) para coincidir com o AuthContext
+  const { user, logout } = useContext(AuthContext); 
 
   return (
     <div className='sidebar'>
@@ -29,7 +30,7 @@ export default function Header() {
         Perfil
       </Link>
 
-      {/* Nome alterado de 'Configurações' para 'Secretarias' */}
+      {/* Aba de Secretarias visível apenas para Admin */}
       {user.isadm && (
         <Link to='/settings'>
           <FiSettings color='#fff' size={24} />
@@ -37,7 +38,8 @@ export default function Header() {
         </Link>
       )}
 
-      <button onClick={() => logOut()} className="logout-btn">
+      {/* Botão de Sair corrigido para chamar a função correta */}
+      <button onClick={ () => logout() } className="logout-btn">
         <FiLogOut color='#fff' size={24} />
         <span>Sair</span>
       </button>
