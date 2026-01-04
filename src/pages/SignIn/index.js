@@ -7,10 +7,7 @@ import logo from '../../assets/logo.png';
 export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
-  // Inicializa o tema buscando do localStorage ou padrão 'light'
   const [theme, setTheme] = useState(localStorage.getItem('@theme') || 'light');
-
   const { signIn, loadingAuth } = useContext(AuthContext);
 
   // Aplica o tema ao elemento raiz do HTML sempre que mudar
@@ -25,6 +22,21 @@ export default function SignIn() {
       signIn(email, password);
     }
   }
+
+  async function handleForgotPassword() {
+  if (email === '') {
+    toast.warning("Digite seu e-mail para recuperar a senha.");
+    return;
+  }
+  
+  await resetPassword(email)
+    .then(() => {
+      toast.success("E-mail de recuperação enviado!");
+    })
+    .catch(() => {
+      toast.error("Erro ao enviar e-mail. Verifique o endereço digitado.");
+    });
+}
 
   return (
     <div className="container-center">
