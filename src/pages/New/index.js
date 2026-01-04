@@ -48,7 +48,6 @@ export default function New(){
       }
     }
     
-    // Apenas carrega a lista de clientes se for Admin ou se for uma edição
     if(user.isadm || id){
         loadingCustomers();
     } else {
@@ -78,19 +77,14 @@ export default function New(){
     try {
       if(editId){
         const docRef = doc(db, 'chamados', id);
-        await updateDoc(docRef, {
+        const updateData = {
           assunto: assunto,
           status: status,
           complemento: complemento,
-          updatedBy: user.nome, // Auditoria: Nome de quem alterou
-        updatedAt: new Date()  // Auditoria: Data da alteração
-    });
-  toast.info('Chamado atualizado!');
-  navigate('/dashboard');
-  return;
+          updatedBy: user.nome, // Auditoria
+          updatedAt: new Date() // Auditoria
         };
 
-        // Apenas Admin altera o cliente vinculado na edição
         if(user.isadm){
             updateData.cliente = customers[customerSelected].nomeEmpresa;
             updateData.clienteId = customers[customerSelected].id;
@@ -102,7 +96,6 @@ export default function New(){
         return;
       }
 
-      // DADOS PARA NOVO CHAMADO
       const novoChamado = {
         created: new Date(),
         assunto: assunto,
@@ -114,7 +107,6 @@ export default function New(){
         departamento: user.departamento
       };
 
-      // Se for Admin, usa o cliente selecionado. Se não, usa os dados do servidor.
       if(user.isadm){
         novoChamado.cliente = customers[customerSelected].nomeEmpresa;
         novoChamado.clienteId = customers[customerSelected].id;
@@ -124,7 +116,6 @@ export default function New(){
       }
 
       await addDoc(collection(db, 'chamados'), novoChamado);
-
       toast.success('Chamado registrado!');
       navigate('/dashboard');
     } catch (error) {
@@ -142,8 +133,6 @@ export default function New(){
         </Title>
         <div className="container">
           <form className="form-profile" onSubmit={handleRegister}>
-            
-            {/* OPCÃO DE CLIENTE VISÍVEL APENAS PARA ADM */}
             {user.isadm && (
               <>
                 <label>Unidade / Cliente:</label>
@@ -169,7 +158,6 @@ export default function New(){
               <option value='financeiro'>Financeiro</option>
             </select>
 
-            {/* STATUS VISÍVEL APENAS PARA ADM */}
             {user.isadm && (
               <>
                 <label>Status</label>
@@ -186,7 +174,6 @@ export default function New(){
 
             <label>Complemento</label>
             <textarea placeholder="Descreva seu problema" onChange={(e) => setComplemento(e.target.value)} value={complemento} />
-            
             <button type="submit">{id ? 'Atualizar Chamado' : 'Registrar Chamado'}</button>
           </form>
         </div>
