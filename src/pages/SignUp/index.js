@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../../contexts/auth';
 import { db } from '../../services/firebaseConnection'; // Importação da conexão com banco
 import { collection, getDocs } from 'firebase/firestore'; // Importação do Firestore
+import '../SignIn/signin.css';
 
 export default function SignUp() {
   const [nome, setNome] = useState('');
