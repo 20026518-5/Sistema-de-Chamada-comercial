@@ -113,7 +113,9 @@ export default function Settings() {
     <div>
       <Header />
       <div className="content">
-        <Title name="Configurações de Setores"><FiSettings size={25} /></Title>
+        <Title name="Secretarias">
+          <FiSettings size={25} />
+        </Title>
 
         {/* --- BLOCO DE CADASTRO --- */}
         <div className="container">
