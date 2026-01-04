@@ -1,6 +1,7 @@
-button {
-  min-height: 44px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.login {
+  width: 700px; /* Mais largo para os selects de secretaria/departamento */
+  max-width: 95%;
+  background-color: var(--container-bg);
+  padding: 2.5em;
+  border-radius: 8px;
 }
