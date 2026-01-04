@@ -1,5 +1,5 @@
-.new{
-  background-color: #83bf02;
+.new {
+  background-color: #83bf02; /* Mantido verde para ação positiva */
   float: right;
   text-decoration: none;
   display: flex;
@@ -24,38 +24,35 @@
 }
 
 table {
-  border:1px solid #CCC;
+  border: 1px solid var(--border-color); /* Variável de borda */
   margin: 0;
   padding: 0;
   width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
+  background-color: var(--container-bg); /* Fundo da tabela conforme tema */
 }
 
-table caption {
-  font-size: 1.5em;
-  margin: 0.5em 0 0.75em;
-  
-}
-
-table tr{
-  background-color: #f8f8f8;
-  border:1px solid #CCC;
+table tr {
+  background-color: var(--container-bg); /* Fundo da linha conforme tema */
+  border: 1px solid var(--border-color);
   padding: 0.35em;
 }
 
-table th,table td{
-text-align: center;
-padding: 0.50em;
+table th, table td {
+  text-align: center;
+  padding: 0.50em;
+  color: var(--text-color); /* Cor do texto conforme tema */
 }
 
-table th{
+table th {
   letter-spacing: 0.15em;
   text-transform: uppercase;
   font-size: 0.85em;
+  background-color: var(--primary-bg); /* Cabeçalho levemente diferente */
 }
 
-table td .action{
+table td .action {
   border: 0;
   color: #fff;
   padding: 5px;
@@ -64,7 +61,7 @@ table td .action{
   display: inline-block;
 }
 
-table td svg{
+table td svg {
   vertical-align: middle;
 }
 
@@ -72,11 +69,10 @@ table td .badge {
   padding: 5px;
   color: #fff;
   border-radius: 3px;
-
 }
 
-.btn-more{
-  background-color: #181C2E;
+.btn-more {
+  background-color: var(--sidebar-bg); /* Botão segue a cor da sidebar do tema */
   color: #fff;
   padding: 0.5em 1em;
   border-radius: 4px;
@@ -84,46 +80,43 @@ table td .badge {
   cursor: pointer;
   border: 0;
   font-size: 1.1em;
+  transition: opacity 0.3s;
 }
 
-@media screen and (max-width:550px){
-  table{
+.btn-more:hover {
+  opacity: 0.8;
+}
+
+.container.dashboard {
+  background-color: var(--container-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+@media screen and (max-width:550px) {
+  table {
     border: 0;
   }
 
-  table caption{
-    font-size: 1.3em;
-  }
-
-  table thead{
-    border: none;
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    position: absolute;
-    width: 1px;
-    padding: 0;
-  }
-
-  table tr{
-    border-bottom: 3px solid #CCC;
+  table tr {
+    border-bottom: 3px solid var(--border-color);
     display: block;
     margin-bottom: 0.5em;
-    
+    background-color: var(--container-bg);
   }
 
-  table td{
-    border-bottom: 1px solid #CCC;
+  table td {
+    border-bottom: 1px solid var(--border-color);
     display: block;
     text-align: right;
     font-size: 0.8em;
-    
   }
 
-  table td:before{
+  table td:before {
     content: attr(data-label);
-    float:left;
+    float: left;
     font-weight: bold;
     text-transform: uppercase;
+    color: var(--text-color);
   }
 }
