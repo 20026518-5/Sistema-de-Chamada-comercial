@@ -47,4 +47,4 @@ export default function SignIn() {
       <Link to="/register">Criar uma conta</Link>
     </div>
   </div>
-);
+)
