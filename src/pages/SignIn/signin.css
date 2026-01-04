@@ -7,31 +7,35 @@
   position: relative; /* Permite o posicionamento absoluto do seletor */
 }
 
+/* ... restante do código anterior ... */
+
 .login {
-  background-color: var(--container-bg);
-  width: 500px; /* Largura ideal para 100% de zoom */
-  max-width: 90%;
+  background-color: #EAEAEC;
+  width: 600px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: 2.5em;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border-radius: 8px; /* Garante que o quadro tenha cantos arredondados */
+  overflow: hidden; /* Garante que a faixa azul não ultrapasse os cantos */
 }
 
 .login-area {
-  background-color: transparent;
-  display: flex;
-  justify-content: center;
+  background-color: #181C2E;
   width: 100%;
-  margin-bottom: 1.5em;
+  justify-content: center;
+  display: flex;
 }
 
 .login-area img {
-  width: 150px;
-  height: 150px;
+  width: 180px;         /* Largura ajustada */
+  height: auto;          /* Altura automática para manter a proporção e não cortar */
+  max-height: 150px;     /* Limite máximo de altura */
+  padding: 15px;         /* Padding reduzido para a imagem aparecer maior */
+  object-fit: contain;   /* Faz com que a imagem caiba inteira no espaço */
 }
+
+/* ... restante do código anterior ... */
 
 /* Novo estilo do Seletor Superior Direito */
 .theme-selector-wrapper {
