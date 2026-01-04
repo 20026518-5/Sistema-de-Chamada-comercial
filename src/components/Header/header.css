@@ -1,18 +1,17 @@
 .sidebar {
   margin: 0;
   padding: 0;
-  background-color: #181c2e;
+  background-color: var(--sidebar-bg); /* Variável */
   position: fixed;
   height: 100vh;
   overflow: auto;
   width: 200px;
+  transition: background 0.3s;
 }
 
 .sidebar div {
   background: url('../../assets/cover.png');
-  .sidebar {
-  background-color: var(--sidebar-bg);
-  }
+  background-color: var(--sidebar-bg); /* Variável */
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -20,88 +19,21 @@
   padding-top: 35px;
 }
 
-.sidebar div img {
-  height: 90px;
-  width: 90px;
-  display: block;
-  margin: auto;
-  border-radius: 50%;
-  object-fit: cover;
-  filter: drop-shadow(2px 3px 6px #181c2e);
-  -webkit-filter: drop-shadow(2px 3px 6px #181c2e);
-}
-
-/* Estilo unificado para Links e o Botão de Sair */
 .sidebar a, .logout-btn {
-  display: flex; /* Mudado de block para flex para alinhar ícone e texto */
+  display: flex;
   align-items: center;
   padding: 17px;
   text-decoration: none;
   color: rgba(255, 255, 255, 0.7);
   transition: ease-in-out 0.4s;
-  cursor: pointer;
-}
-
-/* Específico para o botão de sair para remover estilos padrão de botão */
-.logout-btn {
-  width: 100%;
-  background: transparent;
-  border: 0;
-  font-family: inherit;
-  font-size: 1.1em;
-  text-align: left;
-}
-
-.sidebar a svg, .logout-btn svg {
-  margin-right: 0.7rem;
 }
 
 .sidebar a:hover, .logout-btn:hover {
-  background-color: #121212;
+  background-color: rgba(0,0,0,0.2);
   color: #fff;
 }
 
 .content {
   margin-left: 200px;
   padding: 1px 16px;
-}
-
-/* Responsividade para telas menores que 700px */
-@media screen and (max-width: 700px) {
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-    display: flex; /* Organiza os itens horizontalmente no mobile */
-    flex-wrap: wrap;
-  }
-
-  div.content {
-    margin-left: 0;
-  }
-
-  .sidebar a, .logout-btn {
-    flex: 1; /* Divide o espaço entre os botões */
-    justify-content: center;
-    padding: 15px 5px;
-  }
-
-  .sidebar div {
-    display: none; /* Esconde a capa/avatar no mobile para ganhar espaço */
-  }
-
-  .sidebar a svg, .logout-btn svg {
-    margin-right: 5px; /* Reduz margem no mobile */
-  }
-}
-
-/* Responsividade para telas muito pequenas (abaixo de 400px) */
-@media screen and (max-width: 400px) {
-  .sidebar a, .logout-btn {
-    font-size: 0.9em;
-  }
-  
-  .sidebar a svg, .logout-btn svg {
-    display: none; /* Esconde ícones para caber apenas o texto se necessário */
-  }
 }
