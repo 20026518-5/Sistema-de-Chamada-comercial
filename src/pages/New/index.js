@@ -47,8 +47,14 @@ export default function New(){
         setCustomers([ { id: '1', nomeEmpresa: 'ERRO AO BUSCAR' } ]);
       }
     }
-    loadingCustomers();
-  }, [id]);
+    
+    // Apenas carrega a lista de clientes se for Admin ou se for uma edição
+    if(user.isadm || id){
+        loadingCustomers();
+    } else {
+        setLoadingCustomer(false);
+    }
+  }, [id, user.isadm]);
 
   const loadId = async (list) => {
     try {
@@ -57,8 +63,9 @@ export default function New(){
       setAssunto(snapshot.data().assunto);
       setComplemento(snapshot.data().complemento);
       setStatus(snapshot.data().status);
+      
       let clienteIndex = list.findIndex(item => item.id === snapshot.data().clienteId);
-      setCustomerSelected(clienteIndex);
+      setCustomerSelected(clienteIndex !== -1 ? clienteIndex : 0);
       setEditId(true);
     } catch (error) {
       toast.error('Chamado não encontrado');
@@ -66,28 +73,32 @@ export default function New(){
     }
   }
 
-const handleRegister = async (e) => {
-  e.preventDefault();
-  try {
-    if(editId){
-      const docRef = doc(db, 'chamados', id);
-      await updateDoc(docRef, {
-        cliente: customers[customerSelected].nomeEmpresa,
-        clienteId: customers[customerSelected].id,
-        assunto: assunto,
-        status: status,
-        complemento: complemento,
-      });
-      toast.info('Chamado atualizado!');
-      navigate('/dashboard');
-      return;
-    }
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      if(editId){
+        const docRef = doc(db, 'chamados', id);
+        const updateData = {
+          assunto: assunto,
+          status: status,
+          complemento: complemento,
+        };
 
-      // NOVO CHAMADO: Vincula Secretaria e Departamento do Usuário
-      await addDoc(collection(db, 'chamados'), {
+        // Apenas Admin altera o cliente vinculado na edição
+        if(user.isadm){
+            updateData.cliente = customers[customerSelected].nomeEmpresa;
+            updateData.clienteId = customers[customerSelected].id;
+        }
+
+        await updateDoc(docRef, updateData);
+        toast.info('Chamado atualizado!');
+        navigate('/dashboard');
+        return;
+      }
+
+      // DADOS PARA NOVO CHAMADO
+      const novoChamado = {
         created: new Date(),
-        cliente: customers[customerSelected].nomeEmpresa,
-        clienteId: customers[customerSelected].id,
         assunto: assunto,
         status: status,
         complemento: complemento,
@@ -95,11 +106,23 @@ const handleRegister = async (e) => {
         userName: user.nome,
         secretaria: user.secretaria,
         departamento: user.departamento
-      });
+      };
+
+      // Se for Admin, usa o cliente selecionado. Se não, usa os dados do servidor.
+      if(user.isadm){
+        novoChamado.cliente = customers[customerSelected].nomeEmpresa;
+        novoChamado.clienteId = customers[customerSelected].id;
+      } else {
+        novoChamado.cliente = user.nome;
+        novoChamado.clienteId = user.uid;
+      }
+
+      await addDoc(collection(db, 'chamados'), novoChamado);
 
       toast.success('Chamado registrado!');
       navigate('/dashboard');
     } catch (error) {
+      console.error(error);
       toast.error('Erro ao registrar.');
     }
   }
@@ -113,18 +136,24 @@ const handleRegister = async (e) => {
         </Title>
         <div className="container">
           <form className="form-profile" onSubmit={handleRegister}>
-            <label>Cliente:</label>
-            { loadingCustomer ? (
-              <div className="loading-field">
-                <Loading size={20} color="#121212" />
-                <span>Buscando empresas...</span>
-              </div>
-            ) : (
-              <select value={customerSelected} onChange={(e) => setCustomerSelected(e.target.value)}>
-                {customers.map((item, index) => (
-                  <option key={index} value={index}>{item.nomeEmpresa}</option>
-                ))}
-              </select>
+            
+            {/* OPCÃO DE CLIENTE VISÍVEL APENAS PARA ADM */}
+            {user.isadm && (
+              <>
+                <label>Unidade / Cliente:</label>
+                { loadingCustomer ? (
+                  <div className="loading-field">
+                    <Loading size={20} color="#121212" />
+                    <span>Buscando unidades...</span>
+                  </div>
+                ) : (
+                  <select value={customerSelected} onChange={(e) => setCustomerSelected(e.target.value)}>
+                    {customers.map((item, index) => (
+                      <option key={index} value={index}>{item.nomeEmpresa}</option>
+                    ))}
+                  </select>
+                )}
+              </>
             )}
 
             <label>Assunto:</label>
@@ -134,23 +163,25 @@ const handleRegister = async (e) => {
               <option value='financeiro'>Financeiro</option>
             </select>
 
-{user.isadm && (
-  <>
-    <label>Status</label>
-    <div className="status">
-      <input type='radio' name='status' value='Em aberto' checked={status === 'Em aberto'} onChange={(e) => setStatus(e.target.value)} />
-      <span>Em Aberto</span>
-      <input type='radio' name='status' value='atendido' checked={status === 'atendido'} onChange={(e) => setStatus(e.target.value)} />
-      <span>Atendido</span>
-      <input type='radio' name='status' value='Em progresso' checked={status === 'Em progresso'} onChange={(e) => setStatus(e.target.value)} />
-      <span>Em progresso</span>
-    </div>
-  </>
-)}
+            {/* STATUS VISÍVEL APENAS PARA ADM */}
+            {user.isadm && (
+              <>
+                <label>Status</label>
+                <div className="status">
+                  <input type='radio' name='status' value='Em aberto' checked={status === 'Em aberto'} onChange={(e) => setStatus(e.target.value)} />
+                  <span>Em Aberto</span>
+                  <input type='radio' name='status' value='atendido' checked={status === 'atendido'} onChange={(e) => setStatus(e.target.value)} />
+                  <span>Atendido</span>
+                  <input type='radio' name='status' value='Em progresso' checked={status === 'Em progresso'} onChange={(e) => setStatus(e.target.value)} />
+                  <span>Em progresso</span>
+                </div>
+              </>
+            )}
 
             <label>Complemento</label>
             <textarea placeholder="Descreva seu problema" onChange={(e) => setComplemento(e.target.value)} value={complemento} />
-            <button type="submit">Registrar</button>
+            
+            <button type="submit">{id ? 'Atualizar Chamado' : 'Registrar Chamado'}</button>
           </form>
         </div>
       </div>
