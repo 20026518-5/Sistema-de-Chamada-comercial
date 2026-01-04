@@ -25,33 +25,26 @@ export default function SignIn() {
 
   return (
     <div className="container-center">
-      <div className="login">
-        <div className="login-area">
-          <img src={logo} alt="Logo do sistema" />
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <h1>Entrar</h1>
-          <input type="text" placeholder="email@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <input type="password" placeholder="*******" value={password} onChange={(e) => setPassword(e.target.value)} />
-          <button type="submit">{loadingAuth ? 'Carregando...' : 'Acessar'}</button>
-        </form>
-
-        <Link to="/register">Criar uma conta</Link>
-
-        <div className="theme-selector" style={{ marginTop: '20px', borderTop: '1px solid #DDD', paddingTop: '10px' }}>
-          <label style={{ fontSize: '0.8em', color: '#666' }}>Personalizar Tema:</label>
-          <select 
-            value={theme} 
-            onChange={(e) => setTheme(e.target.value)}
-            style={{ width: '100%', marginTop: '5px', padding: '8px', borderRadius: '4px' }}
-          >
-            <option value="light">Claro (Padrão)</option>
-            <option value="dark">Escuro</option>
-            <option value="jade">Verde Jade</option>
-          </select>
-        </div>
-      </div>
+    {/* Seletor posicionado de forma absoluta */}
+    <div className="theme-selector-wrapper">
+      <label style={{ fontSize: '0.7em', marginBottom: '4px', color: 'var(--text-color)' }}>TEMA</label>
+      <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+        <option value="light">Claro</option>
+        <option value="dark">Escuro</option>
+        <option value="jade">Verde Jade</option>
+      </select>
     </div>
-  );
-}
+
+    <div className="login">
+      <div className="login-area">
+        <img src={logo} alt="Logo" />
+      </div>
+      <form onSubmit={handleSubmit}>
+        <h1>Entrar</h1>
+        {/* ... campos de input ... */}
+        <button type="submit">{loadingAuth ? 'Carregando...' : 'Acessar'}</button>
+      </form>
+      <Link to="/register">Criar uma conta</Link>
+    </div>
+  </div>
+);
