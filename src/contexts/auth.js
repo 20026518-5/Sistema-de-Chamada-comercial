@@ -5,13 +5,26 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  sendEmailVerification, 
+  sendPasswordResetEmail 
+} from 'firebase/auth';
+
 export const AuthContext = createContext({});
+
 
 function AuthProvider({ children }){
   const [user, setUser] = useState(null);
   const [loadingAuth, setLoadingAuth] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  async function resetPassword(email) {
+  return sendPasswordResetEmail(auth, email); // Funcionalidade 2
+}
 
   useEffect(() => {
     async function loadUser(){
@@ -24,42 +37,42 @@ function AuthProvider({ children }){
     loadUser();
   }, [])
 
-  async function signUp(name, email, password, secretaria, departamento) {
-    setLoadingAuth(true);
-    try {
-      const value = await createUserWithEmailAndPassword(auth, email, password);
-      const uid = value.user.uid;
-
-      await setDoc(doc(db, 'users', uid), {
-        nome: name,
+ async function signUp(email, password, nome, secretaria, departamento) {
+  setLoadingAuth(true);
+  await createUserWithEmailAndPassword(auth, email, password)
+    .then(async (value) => {
+      let uid = value.user.uid;
+      await setDoc(doc(db, "users", uid), {
+        nome: nome,
         avatarUrl: null,
-        secretaria: secretaria,
-        departamento: departamento,
-        isadm: false, // Define como usuário comum por padrão
-      });
-
-      const data = {
-        uid: uid,
-        nome: name,
-        email: email,
-        avatarUrl: null,
-        secretaria: secretaria,
-        departamento: departamento,
         isadm: false,
-      };
-
-      setUser(data);
-      storageUser(data);
+        secretaria: secretaria,
+        departamento: departamento
+      })
+      .then(async () => {
+        await sendEmailVerification(value.user); // Funcionalidade 1
+        
+        let data = {
+          uid: uid,
+          nome: nome,
+          email: value.user.email,
+          avatarUrl: null,
+          isadm: false,
+          secretaria: secretaria,
+          departamento: departamento
+        };
+        setUser(data);
+        storageUser(data);
+        setLoadingAuth(false);
+        toast.success("Bem vindo! Verifique seu e-mail para validar a conta.");
+      })
+    })
+    .catch((error) => {
+      console.log(error);
       setLoadingAuth(false);
-      toast.success('Cadastrado com sucesso');
-      navigate('/dashboard');
-
-    } catch (err) {
-      console.error(err);
-      toast.error('Erro ao cadastrar.');
-      setLoadingAuth(false);
-    }
-  }
+      toast.error("Erro ao cadastrar.");
+    })
+}
 
   async function signIn(email, password) {
     setLoadingAuth(true);
