@@ -45,15 +45,6 @@ npm install
 # Inicie a aplicação na porta 3000
 npm start
 
-
-🕵🏿 Testes
-Para executar os testes de cobertura:
-npm run test:coverage
-
-Para executar os testes localmente:
-npm run cy:open
-:balance_scale: Licença
-
 Este projeto está licenciado sob a licença MIT.
 
 Desenvolvido por: Bruna Eduarda  
