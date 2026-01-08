@@ -1,3 +1,4 @@
+/* src/index.css */
 :root {
   --primary-bg: #f8f8f8;
   --sidebar-bg: #181c2e;
@@ -6,6 +7,7 @@
   --container-bg: #FFF;
   --text-color: #121212;
   --border-color: #DDD;
+  --input-bg: #FFF; /* Adicionado */
 }
 
 [data-theme='dark'] {
@@ -16,21 +18,29 @@
   --container-bg: #1e1e1e;
   --text-color: #F5F5F5;
   --border-color: #333;
+  --input-bg: #2b2b2b; /* Adicionado */
 }
 
-/* Novo Tema Verde Azulado Escuro (Antigo Jade) */
-[data-theme='jade'] {
-  --primary-bg: #e0f2f2;
-  --sidebar-bg: #002d2d; /* Verde Azulado Bem Escuro */
-  --sidebar-text: rgba(255, 255, 255, 0.8);
-  --sidebar-text-hover: #4db6ac;
-  --container-bg: #FFF;
-  --text-color: #002d2d;
-  --border-color: #b2dfdb;
-}
+/* Removido o tema [data-theme='jade'] */
 
 body {
   background-color: var(--primary-bg);
   color: var(--text-color);
   transition: background 0.3s, color 0.3s;
+}
+
+/* Estilos para o Rodapé */
+.footer-sistema {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-color);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.footer-sistema a {
+  color: var(--text-color);
+  text-decoration: underline;
 }
