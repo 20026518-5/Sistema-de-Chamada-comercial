@@ -48,20 +48,13 @@ npm start
 
 🕵🏿 Testes
 Para executar os testes de cobertura:
-
-bash
 npm run test:coverage
-Para executar os testes localmente:
 
-bash
+Para executar os testes localmente:
 npm run cy:open
 :balance_scale: Licença
+
 Este projeto está licenciado sob a licença MIT.
-
-:speaking_head: Dúvidas ou feedbacks sobre o projeto
-E-mail: brunaduda37@gmail.com
-
-LinkedIn: Bruna Eduarda
 
 Desenvolvido por: Bruna Eduarda  
 Adaptado por: Departamento de Tecnologia de Buritis-RO
