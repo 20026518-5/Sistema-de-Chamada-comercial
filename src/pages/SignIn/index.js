@@ -83,14 +83,14 @@ export default function SignIn() {
         </form>
 
         <Link to="/register">Criar uma conta</Link>
-              <footer className="footer-sistema">
-  <p>Desenvolvido por: <strong>Bruna Eduarda</strong></p>
-  <p>Projeto original: <a href="https://github.com/suelen-m-m/chamada-3" target="_blank" rel="noreferrer">GitHub - Sistema de Chamados</a></p>
-  <p>Licença: Este projeto está licenciado sob a licença MIT.</p>
-  <p>Adaptado por: <strong>Departamento de Tecnologia da Prefeitura de Buritis-RO</strong></p>
+              
+        <footer className="footer-sistema">
+        <p>Desenvolvido por: <strong>Bruna Eduarda</strong></p>
+        <p>Projeto original: <a href="https://github.com/suelen-m-m/chamada-3" target="_blank" rel="noreferrer">GitHub - Sistema de Chamados</a></p>
+        <p>Licença: Este projeto está licenciado sob a licença MIT.</p>
+        <p>Adaptado por: <strong>Departamento de Tecnologia da Prefeitura de Buritis-RO</strong></p>
 </footer>
       </div>
     </div>
   );
-
 }
