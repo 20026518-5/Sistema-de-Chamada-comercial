@@ -1,11 +1,12 @@
-.container {
+.container{
   display: flex;
-  background-color: var(--container-bg); 
+  background-color: var(--container-bg); /* Alterado de #f8f8f8 para variável dinâmica */
+  color: var(--text-color); /* Garante que o texto seja visível em ambos os temas */
   border-radius: 5px;
   padding: 0.8em;
   align-items: center;
   margin-bottom: 1em;
-  color: var(--text-color);
+  border: 1px solid var(--border-color); /* Adicionado borda para melhor contraste */
 }
 
 .dashboard{
@@ -18,6 +19,7 @@
   margin:2em 0;
   font-size: 1.2em;
   font-weight: 600;
+  color: var(--text-color); /* Garante visibilidade do enunciado/texto interno */
 }
 
 .label-avatar{
@@ -52,34 +54,25 @@
   object-fit: cover;
 }
 
-.form-profile label {
+.form-profile label{
   margin-bottom: 0.5em;
   font-size: 1.4em;
-  color: var(--text-color); 
+  color: var(--text-color); /* Garante visibilidade das labels */
 }
 
-.form-profile input, .form-profile textarea, .form-profile select {
+.form-profile input, textarea, select{
   margin-bottom: 1em;
-  padding: 1.5em;
-  border: 1px solid var(--border-color);
+  padding: 1.5em ;
+  border: 1px solid var(--border-color); /* Borda visível no tema escuro */
   border-radius: 5px;
   max-width: 600px;
-  background-color: var(--input-bg);
-  color: var(--text-color); 
+  background-color: var(--input-bg); /* Fundo dinâmico para os campos de formulário */
+  color: var(--text-color); /* Texto dinâmico para os campos de formulário */
 }
 
 .form-profile input:disabled{
   cursor: not-allowed;
-}
-
-.form-profile input, textarea, select {
-  margin-bottom: 1em;
-  padding: 1.5em;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  max-width: 600px;
-  background-color: var(--input-bg); /* Usa a nova variável de input */
-  color: var(--text-color);
+  opacity: 0.6;
 }
 
 .form-profile button{
@@ -88,11 +81,13 @@
 
 .logout-btn{
   padding: 8px 20px;
-  border: 1px solid #121212;
+  border: 1px solid var(--text-color); /* Borda dinâmica acompanhando o tema */
   background-color: transparent;
   border-radius: 5px;
   font-size: 1.5em;
   display: flex;
   justify-content: center;
   align-items: center;
+  color: var(--text-color); /* Cor do botão de sair dinâmica */
+  cursor: pointer;
 }
