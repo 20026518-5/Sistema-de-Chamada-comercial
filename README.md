@@ -33,7 +33,8 @@ Fonte: [Bruna Eduarda]
 
 **Clonar este repositório**
 
-git clone git@github.com:BrunaEduarda03/sistema-de-chamados.git
+git clone https://github.com/20026518-5/Chamada-3.git
+
 ⚠️ Atenção: É necessário ter o Node.js  instalado em sua máquina para rodar o projeto.
 
 Dentro da pasta sistema-de-chamados:
