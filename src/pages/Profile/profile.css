@@ -5,7 +5,7 @@
   padding: 0.8em;
   align-items: center;
   margin-bottom: 1em;
-  color: var(--text-color); 
+  color: var(--text-color);
 }
 
 .dashboard{
@@ -70,6 +70,16 @@
 
 .form-profile input:disabled{
   cursor: not-allowed;
+}
+
+.form-profile input, textarea, select {
+  margin-bottom: 1em;
+  padding: 1.5em;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  max-width: 600px;
+  background-color: var(--input-bg); /* Usa a nova variável de input */
+  color: var(--text-color);
 }
 
 .form-profile button{
