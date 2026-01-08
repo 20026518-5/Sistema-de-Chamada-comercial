@@ -48,7 +48,6 @@ export default function SignIn() {
         <select value={theme} onChange={(e) => setTheme(e.target.value)}>
           <option value="light">Claro</option>
           <option value="dark">Escuro</option>
-          <option value="jade">Verde Jade</option>
         </select>
       </div>
 
