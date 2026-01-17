@@ -110,3 +110,15 @@ form button:hover {
   background: var(--container-bg);
   color: var(--text-color);
 }
+
+.footer-sistema {
+  margin-top: 20px;
+  font-size: 12px;
+  text-align: center;
+  color: var(--text-color); /* Para se adaptar aos temas */
+  opacity: 0.8;
+}
+
+.footer-sistema p {
+  margin: 2px 0;
+}
