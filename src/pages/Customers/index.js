@@ -7,6 +7,9 @@ import Title from '../../components/Title';
 import { FiUsers, FiEdit2, FiCheck, FiX } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 
+// IMPORTANTE: Importar o CSS compartilhado do perfil para pegar os estilos do formulário e do tema
+import '../Profile/profile.css';
+
 export default function Servidores() {
   const { user } = useContext(AuthContext);
   const [usuarios, setUsuarios] = useState([]);
@@ -64,7 +67,6 @@ export default function Servidores() {
     }
   }
 
-  // Verificação de ADM movida para baixo dos Hooks para evitar o erro do ESLint
   if (!user.isadm) {
     return (
       <div>
@@ -92,21 +94,34 @@ export default function Servidores() {
         <Title name="Consulta de Servidores"><FiUsers size={25} /></Title>
 
         <div className="container">
+          {/* A classe form-profile agora terá os estilos carregados corretamente */}
           <div className="form-profile" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
             <div>
               <label>Nome</label>
-              <input type="text" placeholder="Pesquisar servidor..." value={buscaNome} onChange={(e) => setBuscaNome(e.target.value)} />
+              <input 
+                type="text" 
+                placeholder="Pesquisar servidor..." 
+                value={buscaNome} 
+                onChange={(e) => setBuscaNome(e.target.value)} 
+              />
             </div>
             <div>
               <label>Secretaria</label>
-              <select value={filtroSecretaria} onChange={(e) => { setFiltroSecretaria(e.target.value); setFiltroDepartamento(''); }}>
+              <select 
+                value={filtroSecretaria} 
+                onChange={(e) => { setFiltroSecretaria(e.target.value); setFiltroDepartamento(''); }}
+              >
                 <option value="">Todas</option>
                 {secretariasUnicas.map(sec => <option key={sec} value={sec}>{sec}</option>)}
               </select>
             </div>
             <div>
               <label>Departamento</label>
-              <select value={filtroDepartamento} onChange={(e) => setFiltroDepartamento(e.target.value)} disabled={!filtroSecretaria}>
+              <select 
+                value={filtroDepartamento} 
+                onChange={(e) => setFiltroDepartamento(e.target.value)} 
+                disabled={!filtroSecretaria}
+              >
                 <option value="">Todos</option>
                 {listaSetores.filter(s => s.secretaria === filtroSecretaria).map(item => <option key={item.id} value={item.departamento}>{item.departamento}</option>)}
               </select>
