@@ -1,99 +1,122 @@
 .container-center {
-  background-color: var(--primary-bg);
+  height: 100%;
   display: flex;
-  min-height: 100vh; /* Garante que ocupa a tela toda para centralizar */
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  position: relative;
+  align-items: center;
+  background-color: var(--background-color);
+  flex-direction: column;
 }
 
 .login {
-  background-color: var(--container-bg);
-  width: 500px; /* Tamanho ideal para 100% de zoom */
+  background-color: var(--secondary-bg);
+  width: 600px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  border-radius: 8px;
-  overflow: hidden; /* Garante que a faixa azul acompanhe o arredondamento */
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  padding: 30px; /* Aumentei um pouco para caber o rodapé */
+  border-radius: 5px; /* Bordas levemente arredondadas */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Sombra mais suave */
 }
 
 .login-area {
-  background-color: #181C2E;
+  background-color: var(--container-bg);
   width: 100%;
-  justify-content: center;
   display: flex;
-  padding: 10px 0; /* Espaço interno para a faixa azul */
+  justify-content: center;
 }
 
 .login-area img {
-  width: 100%;
-  max-width: 200px;     /* Limite de largura para não ficar gigante */
-  height: auto;          /* Mantém a proporção original */
-  max-height: 140px;     /* Limite de altura para não cortar */
-  object-fit: contain;   /* GARANTE QUE A IMAGEM APAREÇA INTEIRA */
-  display: block;
-  padding: 10px;         /* Espaço para a logo não encostar nas bordas */
+  width: 170px;
+  height: 170px;
+  padding: 20px;
 }
 
 form {
-  display: flex;
+  margin-top: 20px;
   width: 90%;
+  display: flex;
   flex-direction: column;
-  margin-top: 1.5rem;
 }
 
-form h1 {
+h1 {
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 15px;
   color: var(--text-color);
 }
 
-form input {
+input {
+  margin-bottom: 15px;
+  height: 40px; /* Altura um pouco maior para toque */
+  border: 1px solid var(--border-color); /* Borda sutil */
   border-radius: 4px;
-  padding: 15px; /* Reduzi um pouco para ficar mais elegante */
-  background-color: var(--input-bg);
-  margin-bottom: 1rem;
-  height: 45px;
-  border: 1px solid var(--border-color);
-  color: var(--text-color);
+  padding: 10px;
   font-size: 15px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
 }
 
-form button {
-  height: 45px;
-  background-color: #181C2E;
-  color: #fff;
-  font-size: 1.1rem;
+button {
+  height: 40px;
   border: 0;
   border-radius: 4px;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  font-weight: bold;
-  transition: all 0.5s;
+  background-color: #181c2e;
+  color: #fff;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-form button:hover {
-  background-color: rgba(3, 68, 172, 0.768);
+button:hover {
+  background-color: #252b45;
 }
 
-.login a {
-  text-decoration: none;
+a {
+  margin: 15px 0;
+  text-align: center;
   cursor: pointer;
   color: var(--text-color);
-  margin: 1.5rem 0;
-  font-size: 0.9em;
+  text-decoration: none;
 }
 
-/* Responsividade */
-@media screen and (max-width: 620px) {
-  .login { width: 90%; }
+a:hover {
+  text-decoration: underline;
 }
 
-/* Seletor de Tema no Canto Superior */
+/* --- NOVO ESTILO DO RODAPÉ COMERCIAL --- */
+.footer-sistema {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-color);
+  opacity: 0.7; /* Deixa discreto */
+}
+
+.footer-sistema p {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espaço entre ícone e texto */
+  margin: 0;
+}
+
+.footer-sistema svg {
+  color: var(--text-color);
+  font-size: 1.1em;
+}
+
+.footer-sistema a {
+  margin: 0;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+/* Seletor de Tema */
 .theme-selector-wrapper {
   position: absolute;
   top: 20px;
@@ -103,22 +126,22 @@ form button:hover {
   align-items: flex-end;
 }
 
+.theme-selector-wrapper label {
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
 .theme-selector-wrapper select {
   padding: 5px 10px;
-  border-radius: 4px;
+  border-radius: 20px;
   border: 1px solid var(--border-color);
-  background: var(--container-bg);
+  background-color: var(--secondary-bg);
   color: var(--text-color);
-}
-
-.footer-sistema {
-  margin-top: 20px;
-  font-size: 12px;
-  text-align: center;
-  color: var(--text-color); /* Para se adaptar aos temas */
-  opacity: 0.8;
-}
-
-.footer-sistema p {
-  margin: 2px 0;
+  font-size: 0.85rem;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
