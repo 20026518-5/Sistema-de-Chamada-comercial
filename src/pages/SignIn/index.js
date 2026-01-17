@@ -4,6 +4,8 @@ import { AuthContext } from '../../contexts/auth';
 import { toast } from 'react-toastify'; 
 import './signin.css';
 import logo from '../../assets/logo.png';
+// Importando ícones para o rodapé
+import { FiCode, FiLayers, FiCheckCircle, FiUserCheck, FiGithub } from 'react-icons/fi';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -83,12 +85,13 @@ export default function SignIn() {
 
         <Link to="/register">Criar uma conta</Link>
               
+        {/* Rodapé com Ícones */}
         <footer className="footer-sistema">
-          <p>Desenvolvido por: <strong>Bruna Eduarda</strong></p>
-          <p>Projeto original: <a href="https://github.com/suelen-m-m/chamada-3" target="_blank" rel="noreferrer">GitHub - Sistema de Chamados</a></p>
-          <p>Licença: Este projeto está licenciado sob a licença MIT.</p>
-          <p>Adaptado por: <strong>Lucas Vinicius Sampaio Lima</strong></p>
-          <p>GitHub: <a href="https://github.com/20026518-5" target="_blank" rel="noreferrer">https://github.com/20026518-5</a></p>
+          <p><FiCode /> Desenvolvido por: <strong>Bruna Eduarda</strong></p>
+          <p><FiLayers /> Projeto original: <a href="https://github.com/suelen-m-m/chamada-3" target="_blank" rel="noreferrer">GitHub - Sistema de Chamados</a></p>
+          <p><FiCheckCircle /> Licença: MIT</p>
+          <p><FiUserCheck /> Adaptado por: <strong>Lucas Vinicius Sampaio Lima</strong></p>
+          <p><FiGithub /> GitHub: <a href="https://github.com/20026518-5" target="_blank" rel="noreferrer">https://github.com/20026518-5</a></p>
         </footer>
       </div>
     </div>
