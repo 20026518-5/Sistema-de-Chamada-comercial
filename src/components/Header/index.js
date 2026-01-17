@@ -1,47 +1,56 @@
-import { useContext } from 'react';
-import avatarImg from '../../assets/avatar.png';   
-import { AuthContext } from '../../contexts/auth';
-import { FiHome, FiSettings, FiUser, FiLogOut, FiUsers } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import { useContext, useState, useEffect } from 'react';
 import './header.css';
+import { AuthContext } from '../../contexts/auth';
+import avatar from '../../assets/avatar.png';
+import { Link } from 'react-router-dom';
+import { FiHome, FiUser, FiSettings, FiLogOut } from "react-icons/fi";
 
-export default function Header() {
-  // Alterado de logOut para logout (minúsculo) para coincidir com o AuthContext
-  const { user, logout } = useContext(AuthContext); 
+export default function Header(){
+  const { user, logOut } = useContext(AuthContext);
+  const [theme, setTheme] = useState(localStorage.getItem('@theme') || 'light');
 
-  return (
-    <div className='sidebar'>
-      <div>
-        <img src={user.avatarUrl === null ? avatarImg : user.avatarUrl} alt='foto do usuario' />
+  // Efeito para aplicar o tema em todas as páginas onde o Header aparece
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('@theme', theme);
+  }, [theme]);
+
+  return(
+    <div className="sidebar">
+      <div className='sidebar-content-top'>
+        <div className="avatar-area">
+          <img src={user.avatarUrl === null ? avatar : user.avatarUrl} alt="Foto avatar" />
+        </div>
+        
+        {/* Seletor de Tema na Sidebar */}
+        <div className="theme-selector-sidebar">
+          <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+            <option value="light">Claro</option>
+            <option value="dark">Escuro</option>
+            <option value="jade">Jade</option>
+          </select>
+        </div>
       </div>
-      
-      <Link to='/dashboard'>
-        <FiHome color='#fff' size={24} />
+
+      <Link to="/dashboard">
+        <FiHome color="#FFF" size={24} />
         Chamados
       </Link>
 
-      <Link to='/servidores'>
-        <FiUsers color='#fff' size={24} />
-        Servidores
+      <Link to="/customers">
+        <FiUser color="#FFF" size={24} />
+        Clientes
       </Link>
 
-      <Link to='/profile'>
-        <FiUser color='#fff' size={24} />
-        Perfil
+      <Link to="/profile">
+        <FiSettings color="#FFF" size={24} />
+        Configurações
       </Link>
-
-      {/* Aba de Secretarias visível apenas para Admin */}
-      {user.isadm && (
-        <Link to='/settings'>
-          <FiSettings color='#fff' size={24} />
-          Secretarias
-        </Link>
-      )}
-
-      {/* Botão de Sair corrigido para chamar a função correta */}
-      <button onClick={ () => logout() } className="logout-btn">
-        <FiLogOut color='#fff' size={24} />
-        <span>Sair</span>
+      
+      {/* Botão de sair movido para o Header para facilitar acesso */}
+      <button onClick={logOut} className="link-logout">
+        <FiLogOut color="#FFF" size={24} />
+        Sair
       </button>
     </div>
   )
