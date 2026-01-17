@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../contexts/auth';
-import { toast } from 'react-toastify'; // Faltava esta importação
+import { toast } from 'react-toastify'; 
 import './signin.css';
 import logo from '../../assets/logo.png';
 
@@ -10,7 +10,6 @@ export default function SignIn() {
   const [password, setPassword] = useState('');
   const [theme, setTheme] = useState(localStorage.getItem('@theme') || 'light');
 
-  // Adicionado resetPassword aqui
   const { signIn, loadingAuth, resetPassword } = useContext(AuthContext);
 
   useEffect(() => {
@@ -85,11 +84,12 @@ export default function SignIn() {
         <Link to="/register">Criar uma conta</Link>
               
         <footer className="footer-sistema">
-        <p>Desenvolvido por: <strong>Bruna Eduarda</strong></p>
-        <p>Projeto original: <a href="https://github.com/suelen-m-m/chamada-3" target="_blank" rel="noreferrer">GitHub - Sistema de Chamados</a></p>
-        <p>Licença: Este projeto está licenciado sob a licença MIT.</p>
-        <p>Adaptado por: <strong>Departamento de Tecnologia da Prefeitura de Buritis-RO</strong></p>
-</footer>
+          <p>Desenvolvido por: <strong>Bruna Eduarda</strong></p>
+          <p>Projeto original: <a href="https://github.com/suelen-m-m/chamada-3" target="_blank" rel="noreferrer">GitHub - Sistema de Chamados</a></p>
+          <p>Licença: Este projeto está licenciado sob a licença MIT.</p>
+          <p>Adaptado por: <strong>Lucas Vinicius Sampaio Lima</strong></p>
+          <p>GitHub: <a href="https://github.com/20026518-5" target="_blank" rel="noreferrer">https://github.com/20026518-5</a></p>
+        </footer>
       </div>
     </div>
   );
