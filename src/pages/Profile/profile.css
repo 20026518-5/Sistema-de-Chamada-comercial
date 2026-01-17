@@ -1,12 +1,12 @@
 .container{
   display: flex;
-  background-color: var(--container-bg); /* Alterado de #f8f8f8 para variável dinâmica */
-  color: var(--text-color); /* Garante que o texto seja visível em ambos os temas */
+  background-color: var(--container-bg);
+  color: var(--text-color);
   border-radius: 5px;
   padding: 0.8em;
   align-items: center;
   margin-bottom: 1em;
-  border: 1px solid var(--border-color); /* Adicionado borda para melhor contraste */
+  border: 1px solid var(--border-color);
 }
 
 .dashboard{
@@ -19,7 +19,7 @@
   margin:2em 0;
   font-size: 1.2em;
   font-weight: 600;
-  color: var(--text-color); /* Garante visibilidade do enunciado/texto interno */
+  color: var(--text-color);
 }
 
 .label-avatar{
@@ -48,52 +48,55 @@
   transform: scale(1.4);
 }
 
-.form-profile {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-profile label {
-  margin-bottom: 0.5em;
-  font-size: 1.1em;
-  color: var(--text-color); /* Garante que o rótulo mude de cor */
-}
-
-.form-profile input, 
-.form-profile select, 
-.form-profile textarea {
+.form-profile img{
   margin-bottom: 1em;
-  padding: 0.7em;
-  border: 1px solid var(--border-color); /* Variável de borda */
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.form-profile label{
+  margin-bottom: 0.5em;
+  font-size: 1.4em;
+  color: var(--text-color);
+}
+
+.form-profile input, textarea, select{
+  margin-bottom: 1em;
+  padding: 1.5em ;
+  border: 1px solid var(--border-color);
   border-radius: 5px;
-  background-color: var(--input-bg);    /* Variável de fundo (preto/cinza no dark) */
-  color: var(--text-color);             /* Variável de texto (branco no dark) */
-  font-size: 1em;
+  max-width: 600px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
 }
 
-.form-profile input:focus, 
-.form-profile select:focus {
-  border-color: #181c2e;
+.form-profile input:disabled{
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
-.label-avatar {
-  width: 150px;
-  height: 150px;
+.form-profile button{
+  max-width: 600px;
+}
+
+.logout-btn{
+  padding: 8px 20px;
+  border: 1px solid var(--text-color);
+  background-color: transparent;
+  border-radius: 5px;
+  font-size: 1.5em;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
+  color: var(--text-color);
   cursor: pointer;
-  margin-bottom: 1.5em;
-  align-self: center; /* Centraliza o avatar no formulário */
 }
 
-/* Garante que os selects dentro da tabela também sigam o padrão */
+/* Correção para inputs/selects dentro de tabelas (ex: página de Servidores) */
 table select, table input {
   background-color: var(--input-bg);
   color: var(--text-color);
   border: 1px solid var(--border-color);
   padding: 5px;
   border-radius: 4px;
-}
 }
