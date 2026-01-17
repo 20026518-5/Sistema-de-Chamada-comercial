@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react"
 import Header from "../../components/Header";
 import Title from "../../components/Title";
-import { FiDelete, FiEdit2, FiMessageSquare, FiPlus, FiSearch } from "react-icons/fi";
+import { FiDelete, FiEdit2, FiMessageSquare, FiPlus, FiSearch, FiCode, FiLayers, FiCheckCircle, FiUserCheck, FiGithub } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import './dashboard.css';
 import { collection, deleteDoc, doc, getDocs, limit, orderBy, query, startAfter, where } from "firebase/firestore";
@@ -30,7 +30,6 @@ export default function Dashboard() {
   const [listaSecretarias, setListaSecretarias] = useState([]);
 
   useEffect(() => {
-    // Carrega a lista de secretarias disponíveis para o filtro do Admin
     async function loadFiltros() {
       const setoresRef = collection(db, 'setores');
       const snapshot = await getDocs(setoresRef);
@@ -38,7 +37,6 @@ export default function Dashboard() {
       snapshot.forEach((doc) => {
         lista.push(doc.data().secretaria);
       });
-      // Remove duplicatas
       setListaSecretarias([...new Set(lista)]);
     }
 
@@ -47,7 +45,6 @@ export default function Dashboard() {
         let q = listRef;
 
         if (!user?.isadm) {
-          // Usuário comum vê apenas seus chamados
           q = query(q, where('userId', '==', user.uid));
         }
 
@@ -70,7 +67,6 @@ export default function Dashboard() {
     }
   }, [user]);
 
-  // Função para aplicar os filtros de busca (Admin)
   async function handleSearch(e) {
     e.preventDefault();
     setLoading(true);
@@ -83,7 +79,6 @@ export default function Dashboard() {
       if (!user?.isadm) {
         q = query(q, where('userId', '==', user.uid));
       } else {
-        // Aplica filtros se existirem
         if (filtroSecretaria !== '') {
           q = query(q, where('secretaria', '==', filtroSecretaria));
         }
@@ -115,7 +110,6 @@ export default function Dashboard() {
           id: doc.id,
           ...data,
           createdFormat: data.created ? format(data.created.toDate(), 'dd/MM/yyyy') : '---',
-          // Prepara data de atualização para auditoria se existir
           updatedFormat: data.updatedAt ? format(data.updatedAt.toDate(), 'dd/MM/yyyy HH:mm') : null
         })
       })
@@ -164,6 +158,28 @@ export default function Dashboard() {
     .catch(() => toast.error('Erro ao deletar.'));
   }
 
+  // Estilo do rodapé interno
+  const footerStyle = {
+    marginTop: '50px',
+    paddingTop: '20px',
+    borderTop: '1px solid var(--border-color)',
+    display: 'flex',
+    flexDirection: 'column', // Empilhado mobile
+    alignItems: 'center',
+    gap: '5px',
+    color: 'var(--text-color)',
+    opacity: 0.6, // Bem discreto
+    fontSize: '0.8rem',
+    textAlign: 'center'
+  };
+
+  const footerItemStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    justifyContent: 'center'
+  };
+
   if (loading) return <div className="container dashboard"><Loading size={40} color="#121212" /></div>;
 
   return (
@@ -174,7 +190,6 @@ export default function Dashboard() {
       
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '15px', marginBottom: '1.5em' }}>
           
-          {/* BLOCO DE FILTROS (Apenas para Admin) */}
           {user.isadm ? (
             <form onSubmit={handleSearch} style={{ display: 'flex', gap: '10px', flex: 1, minWidth: '300px' }}>
               <select 
@@ -204,7 +219,7 @@ export default function Dashboard() {
               </button>
             </form>
           ) : (
-            <div></div> /* Espaçador para manter o botão "Novo chamado" à direita */
+            <div></div> 
           )}
 
           {!user.isadm && (
@@ -264,6 +279,14 @@ export default function Dashboard() {
             {!isEmpty && !loadMore && <button onClick={handleMore} className='btn-more'>Buscar mais</button>}
           </>
         )}
+
+        {/* RODAPÉ INTERNO DISCRETO */}
+        <div style={footerStyle}>
+           <div style={footerItemStyle}><FiCode size={14}/> Dev: <strong>Bruna Eduarda</strong> | <FiLayers size={14}/> Projeto original GitHub</div>
+           <div style={footerItemStyle}><FiUserCheck size={14}/> Adaptado por: <strong>Lucas Vinicius Sampaio Lima</strong></div>
+           <div style={footerItemStyle}><FiGithub size={14}/> <a href="https://github.com/20026518-5" target="_blank" rel="noreferrer" style={{color: 'inherit'}}>GitHub: 20026518-5</a> | <FiCheckCircle size={14}/> Licença MIT</div>
+        </div>
+
       </div>
       {showModal && <Modal conteudo={details} buttomBack={() => setShowModal(!showModal)} />}
     </div>
