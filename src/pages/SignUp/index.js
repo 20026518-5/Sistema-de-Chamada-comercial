@@ -4,7 +4,7 @@ import { AuthContext } from '../../contexts/auth';
 import { db } from '../../services/firebaseConnection';
 import { collection, getDocs } from 'firebase/firestore';
 import logo from '../../assets/logo.png';
-import '../SignIn/signin.css'; // Importa o CSS compartilhado com o Login
+import '../SignIn/signin.css'; 
 
 export default function SignUp() {
   const [nome, setNome] = useState('');
@@ -18,13 +18,11 @@ export default function SignUp() {
 
   const { signUp, loadingAuth } = useContext(AuthContext);
 
-  // Aplica o tema e persiste a escolha
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('@theme', theme);
   }, [theme]);
 
-  // Carrega as secretarias e departamentos do banco de dados
   useEffect(() => {
     async function loadSetores() {
       const querySnapshot = await getDocs(collection(db, "setores"));
@@ -43,22 +41,17 @@ export default function SignUp() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-
     if (nome !== '' && email !== '' && password !== '' && secretaria !== '' && departamento !== '') {
-      // A função signUp no contexto já inclui o sendEmailVerification
       await signUp(email, password, nome, secretaria, departamento);
     } else {
       alert("Preencha todos os campos!");
     }
   }
 
-  // Filtra secretarias únicas para o primeiro select
   const secretariasUnicas = [...new Set(listaSetores.map(item => item.secretaria))];
 
   return (
     <div className="container-center">
-      
-      {/* Seletor de Tema no canto superior direito */}
       <div className="theme-selector-wrapper">
         <label>TEMA</label>
         <select value={theme} onChange={(e) => setTheme(e.target.value)}>
@@ -68,7 +61,6 @@ export default function SignUp() {
         </select>
       </div>
 
-      {/* Cadastro com 700px para acomodar melhor os campos duplos */}
       <div className="login" style={{ width: '700px' }}>
         <div className="login-area">
           <img src={logo} alt="Logo do sistema" />
@@ -76,29 +68,24 @@ export default function SignUp() {
 
         <form onSubmit={handleSubmit}>
           <h1>Cadastrar Servidor</h1>
-          
           <input 
             type="text" 
             placeholder="Seu nome completo" 
             value={nome} 
             onChange={(e) => setNome(e.target.value)} 
           />
-
           <input 
             type="text" 
             placeholder="email@institucional.com" 
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
           />
-
           <input 
             type="password" 
             placeholder="Sua senha" 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
           />
-
-          {/* Seleção de Secretaria */}
           <select 
             value={secretaria} 
             onChange={(e) => { setSecretaria(e.target.value); setDepartamento(''); }}
@@ -109,8 +96,6 @@ export default function SignUp() {
               <option key={index} value={sec}>{sec}</option>
             ))}
           </select>
-
-          {/* Seleção de Departamento (Filtrado pela secretaria escolhida) */}
           <select 
             value={departamento} 
             onChange={(e) => setDepartamento(e.target.value)}
@@ -125,13 +110,20 @@ export default function SignUp() {
               ))
             }
           </select>
-
           <button type="submit">
             {loadingAuth ? 'Cadastrando...' : 'Cadastrar'}
           </button>
         </form>
 
         <Link to="/">Já possui uma conta? Entre aqui</Link>
+
+        <footer className="footer-sistema">
+          <p>Desenvolvido por: <strong>Bruna Eduarda</strong></p>
+          <p>Projeto original: <a href="https://github.com/suelen-m-m/chamada-3" target="_blank" rel="noreferrer">GitHub - Sistema de Chamados</a></p>
+          <p>Licença: Este projeto está licenciado sob a licença MIT.</p>
+          <p>Adaptado por: <strong>Lucas Vinicius Sampaio Lima</strong></p>
+          <p>GitHub: <a href="https://github.com/20026518-5" target="_blank" rel="noreferrer">https://github.com/20026518-5</a></p>
+        </footer>
       </div>
     </div>
   );
