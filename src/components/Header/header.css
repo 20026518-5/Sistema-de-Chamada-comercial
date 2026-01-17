@@ -3,9 +3,11 @@
   padding: 0;
   background-color: #181c2e;
   position: fixed;
+  left: 0; /* Garante que fique encostado na esquerda */
+  top: 0;  /* Garante que comece do topo */
   height: 100vh;
   overflow: auto;
-  width: 200px;
+  width: 200px; /* Largura fixa da sidebar */
   transition: background 0.3s;
   z-index: 99;
 }
@@ -43,7 +45,7 @@
   border: none;
   width: 100%;
   cursor: pointer;
-  font-size: 1rem; /* Garante tamanho de fonte igual aos links */
+  font-size: 1rem;
   font-family: inherit;
 }
 
@@ -56,17 +58,24 @@
   margin-right: 0.8rem;
 }
 
+/* --- CLASSE QUE CORRIGE O CONTEÚDO --- */
+.content {
+  margin-left: 200px; /* Empurra o conteúdo para a direita */
+  padding: 20px;
+}
+
 /* Ajuste Mobile */
 @media screen and (max-width: 700px) {
   .sidebar {
     width: 100%;
     height: auto;
-    position: relative;
+    position: relative; /* No mobile ela deixa de ser fixa */
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
   }
+  
   .sidebar div { display: none; }
   
   .sidebar a, .sidebar-logout {
@@ -75,10 +84,15 @@
   }
   
   .sidebar a span, .sidebar-logout span {
-    display: none; /* Esconde texto no mobile se necessário */
+    display: none; 
   }
   
   .sidebar a svg, .sidebar-logout svg {
     margin-right: 0;
+  }
+
+  /* Remove a margem no mobile pois a sidebar fica no topo */
+  .content {
+    margin-left: 0;
   }
 }
