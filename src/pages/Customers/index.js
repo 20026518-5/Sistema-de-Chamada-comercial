@@ -6,6 +6,7 @@ import Header from '../../components/Header';
 import Title from '../../components/Title';
 import { FiUsers, FiEdit2, FiCheck, FiX } from 'react-icons/fi';
 import { toast } from 'react-toastify';
+import '../Profile/profile.css';
 
 // IMPORTANTE: Importar o CSS compartilhado do perfil para pegar os estilos do formulário e do tema
 import '../Profile/profile.css';
