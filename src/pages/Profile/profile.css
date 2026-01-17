@@ -60,14 +60,27 @@
   color: var(--text-color);
 }
 
-.form-profile input, textarea, select{
+/* APLICAÇÃO GERAL PARA INPUTS, SELECTS E TEXTAREAS */
+/* O uso do !important garante que o navegador não sobreponha com o fundo branco padrão */
+.form-profile input, 
+.form-profile textarea, 
+.form-profile select,
+table input,
+table select {
   margin-bottom: 1em;
-  padding: 1.5em ;
-  border: 1px solid var(--border-color);
+  padding: 1.5em;
+  border: 1px solid var(--border-color) !important;
   border-radius: 5px;
   max-width: 600px;
-  background-color: var(--input-bg);
-  color: var(--text-color);
+  background-color: var(--input-bg) !important; 
+  color: var(--text-color) !important;
+}
+
+/* Ajuste específico para inputs dentro de tabelas para não ficarem gigantes */
+table input, table select {
+  padding: 8px !important;
+  margin-bottom: 0 !important;
+  max-width: 100%;
 }
 
 .form-profile input:disabled{
@@ -90,13 +103,4 @@
   align-items: center;
   color: var(--text-color);
   cursor: pointer;
-}
-
-/* Correção para inputs/selects dentro de tabelas (ex: página de Servidores) */
-table select, table input {
-  background-color: var(--input-bg);
-  color: var(--text-color);
-  border: 1px solid var(--border-color);
-  padding: 5px;
-  border-radius: 4px;
 }
