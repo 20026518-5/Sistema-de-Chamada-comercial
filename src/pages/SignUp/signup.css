@@ -5,3 +5,15 @@
   padding: 2.5em;
   border-radius: 8px;
 }
+
+.footer-sistema {
+  margin-top: 20px;
+  font-size: 12px;
+  text-align: center;
+  color: var(--text-color); /* Para se adaptar aos temas */
+  opacity: 0.8;
+}
+
+.footer-sistema p {
+  margin: 2px 0;
+}
