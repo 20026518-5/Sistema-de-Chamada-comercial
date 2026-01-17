@@ -1,13 +1,17 @@
-.sidebar{
-  height: 100%;
-  width: 200px;
+.sidebar {
+  margin: 0;
+  padding: 0;
   background-color: #181c2e;
   position: fixed;
+  height: 100vh;
   overflow: auto;
+  width: 200px;
+  transition: background 0.3s;
+  z-index: 99;
 }
 
-.sidebar div{
-  background: url(../../assets/cover.png);
+.sidebar div {
+  background: url('../../assets/cover.png');
   background-color: #181c2e;
   background-position: center;
   background-repeat: no-repeat;
@@ -16,46 +20,65 @@
   padding-top: 30px;
 }
 
-.sidebar img{
-  display: block;
-  width: 90px;
+.sidebar div img {
   height: 90px;
+  width: 90px;
+  display: block;
   margin: auto;
   border-radius: 50%;
   object-fit: cover;
+  border: 3px solid rgba(255,255,255,0.2);
   filter: drop-shadow(2px 3px 6px #121212);
-  -webkit-filter: drop-shadow(2px 3px 6px #121212);
 }
 
-.sidebar a{
-  display: block;
-  padding: 16px;
+.sidebar a, .sidebar-logout {
   display: flex;
-  text-decoration: none;
-  color: rgba(255,255,255,0.7);
   align-items: center;
-  transition: ease-in-out .4s;
+  padding: 16px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.7);
+  transition: ease-in-out 0.4s;
+  font-weight: 500;
+  background: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  font-size: 1rem; /* Garante tamanho de fonte igual aos links */
+  font-family: inherit;
 }
 
-.sidebar a:hover{
+.sidebar a:hover, .sidebar-logout:hover {
   background-color: #121212;
   color: #FFF;
 }
 
-.sidebar a svg{
-  margin-right: .5em;
+.sidebar a svg, .sidebar-logout svg {
+  margin-right: 0.8rem;
 }
 
-@media(max-width: 700px){
-  .sidebar{
+/* Ajuste Mobile */
+@media screen and (max-width: 700px) {
+  .sidebar {
     width: 100%;
     height: auto;
     position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
   }
-  .sidebar div{
-    display: none;
+  .sidebar div { display: none; }
+  
+  .sidebar a, .sidebar-logout {
+    width: auto;
+    padding: 10px;
   }
-  .sidebar a{
-    float: left;
+  
+  .sidebar a span, .sidebar-logout span {
+    display: none; /* Esconde texto no mobile se necessário */
+  }
+  
+  .sidebar a svg, .sidebar-logout svg {
+    margin-right: 0;
   }
 }
