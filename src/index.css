@@ -39,7 +39,7 @@ code {
     monospace;
 }
 
-/* --- ESTILOS PARA OS PAINÉIS ESTRUTURADOS --- */
+/* --- ESTILOS PARA OS PAINÉIS (CARTÕES) --- */
 .painel-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -48,7 +48,7 @@ code {
 }
 
 .painel-item {
-  background-color: var(--panel-bg); /* Usa a variável que muda com o tema */
+  background-color: var(--panel-bg); /* Isso dá a cor de fundo do cartão */
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 20px;
@@ -64,30 +64,27 @@ code {
   flex-direction: column;
 }
 
-/* Garante que os labels mudem de cor */
 .painel-linha label {
   font-weight: bold;
   font-size: 0.85rem;
   margin-bottom: 5px;
   color: var(--text-color) !important; 
   opacity: 0.8;
-  transition: color 0.4s;
 }
 
-/* Garante que inputs e selects acompanhem o tema */
 .painel-linha span, 
 .painel-linha input, 
 .painel-linha select {
   font-size: 1rem;
   color: var(--text-color) !important;
   background-color: transparent;
-  border: 1px solid var(--border-color); /* Adicionei borda para ficar visível no input */
+  border: 1px solid var(--border-color);
   padding: 5px;
   border-radius: 4px;
 }
 
-/* Remove a borda dos spans se não quiser que pareçam inputs */
-.painel-linha span {
-  border: none;
-  padding: 0;
+.painel-actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
 }
