@@ -64,24 +64,22 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
-
-.painel-linha {
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: column;
-}
-
 .painel-linha label {
   font-weight: bold;
   font-size: 0.85rem;
   margin-bottom: 5px;
-  color: var(--text-color);
+  /* Força a cor do tema, ignorando o profile.css se houver conflito */
+  color: var(--text-color) !important; 
   opacity: 0.8;
 }
 
-.painel-linha span, .painel-linha input, .painel-linha select {
+.painel-linha span, 
+.painel-linha input, 
+.painel-linha select {
   font-size: 1rem;
-  color: var(--text-color);
+  /* Força a cor do tema */
+  color: var(--text-color) !important;
+  background-color: transparent; /* Garante fundo transparente para inputs */
 }
 
 .painel-actions {
