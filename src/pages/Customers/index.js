@@ -8,9 +8,6 @@ import { FiUsers, FiEdit2, FiCheck, FiX } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import '../Profile/profile.css';
 
-// IMPORTANTE: Importar o CSS compartilhado do perfil para pegar os estilos do formulário e do tema
-import '../Profile/profile.css';
-
 export default function Servidores() {
   const { user } = useContext(AuthContext);
   const [usuarios, setUsuarios] = useState([]);
@@ -95,7 +92,6 @@ export default function Servidores() {
         <Title name="Consulta de Servidores"><FiUsers size={25} /></Title>
 
         <div className="container">
-          {/* A classe form-profile agora terá os estilos carregados corretamente */}
           <div className="form-profile" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
             <div>
               <label>Nome</label>
@@ -132,51 +128,69 @@ export default function Servidores() {
 
         <div className="container">
           {loading ? <span>Carregando...</span> : (
-            <table>
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>Secretaria</th>
-                  <th>Departamento</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {usuariosFiltrados.map((item) => (
-                  <tr key={item.id}>
-                    <td data-label="Nome">
-                      {editandoId === item.id ? <input type="text" value={editNome} onChange={(e) => setEditNome(e.target.value)} style={{ marginBottom: 0 }} /> : item.nome}
-                    </td>
-                    <td data-label="Secretaria">
-                      {editandoId === item.id ? (
-                        <select value={editSec} onChange={(e) => { setEditSec(e.target.value); setEditDep(''); }}>
-                          {secretariasUnicas.map(sec => <option key={sec} value={sec}>{sec}</option>)}
-                        </select>
-                      ) : item.secretaria}
-                    </td>
-                    <td data-label="Departamento">
-                      {editandoId === item.id ? (
-                        <select value={editDep} onChange={(e) => setEditDep(e.target.value)}>
-                          {listaSetores.filter(s => s.secretaria === editSec).map(s => <option key={s.id} value={s.departamento}>{s.departamento}</option>)}
-                        </select>
-                      ) : item.departamento}
-                    </td>
-                    <td data-label="Ações">
-                      {editandoId === item.id ? (
-                        <div style={{ display: 'flex', gap: '5px' }}>
-                          <button className="action" style={{ backgroundColor: '#1fcc44' }} onClick={() => handleSaveEdit(item.id)}><FiCheck size={15} color="#FFF" /></button>
-                          <button className="action" style={{ backgroundColor: '#999' }} onClick={() => setEditandoId(null)}><FiX size={15} color="#FFF" /></button>
-                        </div>
-                      ) : (
-                        <button className="action" style={{ backgroundColor: '#F6A935' }} onClick={() => { setEditandoId(item.id); setEditNome(item.nome); setEditSec(item.secretaria); setEditDep(item.departamento); }}>
-                          <FiEdit2 size={15} color="#FFF" />
+            <div className="painel-grid">
+              {usuariosFiltrados.map((item) => (
+                <div key={item.id} className="painel-item">
+                  
+                  {/* Campo Nome */}
+                  <div className="painel-linha">
+                    <label>Nome:</label>
+                    {editandoId === item.id ? (
+                      <input 
+                        type="text" 
+                        value={editNome} 
+                        onChange={(e) => setEditNome(e.target.value)} 
+                      />
+                    ) : (
+                      <span>{item.nome}</span>
+                    )}
+                  </div>
+
+                  {/* Campo Secretaria */}
+                  <div className="painel-linha">
+                    <label>Secretaria:</label>
+                    {editandoId === item.id ? (
+                      <select value={editSec} onChange={(e) => { setEditSec(e.target.value); setEditDep(''); }}>
+                        {secretariasUnicas.map(sec => <option key={sec} value={sec}>{sec}</option>)}
+                      </select>
+                    ) : (
+                      <span>{item.secretaria}</span>
+                    )}
+                  </div>
+
+                  {/* Campo Departamento */}
+                  <div className="painel-linha">
+                    <label>Departamento:</label>
+                    {editandoId === item.id ? (
+                      <select value={editDep} onChange={(e) => setEditDep(e.target.value)}>
+                        {listaSetores.filter(s => s.secretaria === editSec).map(s => <option key={s.id} value={s.departamento}>{s.departamento}</option>)}
+                      </select>
+                    ) : (
+                      <span>{item.departamento}</span>
+                    )}
+                  </div>
+
+                  {/* Botões de Ação */}
+                  <div className="painel-actions">
+                    {editandoId === item.id ? (
+                      <>
+                        <button className="action" style={{ backgroundColor: '#1fcc44' }} onClick={() => handleSaveEdit(item.id)}>
+                          <FiCheck size={20} color="#FFF" />
                         </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                        <button className="action" style={{ backgroundColor: '#999' }} onClick={() => setEditandoId(null)}>
+                          <FiX size={20} color="#FFF" />
+                        </button>
+                      </>
+                    ) : (
+                      <button className="action" style={{ backgroundColor: '#F6A935' }} onClick={() => { setEditandoId(item.id); setEditNome(item.nome); setEditSec(item.secretaria); setEditDep(item.departamento); }}>
+                        <FiEdit2 size={20} color="#FFF" />
+                      </button>
+                    )}
+                  </div>
+
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
