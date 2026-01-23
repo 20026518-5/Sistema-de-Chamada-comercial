@@ -1,199 +1,122 @@
-import { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../../contexts/auth';
-import { db } from '../../services/firebaseConnection';
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { useState, useEffect } from 'react';
 import Header from '../../components/Header';
 import Title from '../../components/Title';
-import { FiUsers, FiEdit2, FiCheck, FiX } from 'react-icons/fi';
+import { FiUser, FiTrash } from 'react-icons/fi';
+import { db } from '../../services/firebaseConnection';
+import { addDoc, collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
-import '../Profile/profile.css';
 
-export default function Servidores() {
-  const { user } = useContext(AuthContext);
-  const [usuarios, setUsuarios] = useState([]);
-  const [listaSetores, setListaSetores] = useState([]);
+export default function Customers(){
+  const [nomeSecretaria, setNomeSecretaria] = useState('');
+  const [nomeDepartamento, setNomeDepartamento] = useState('');
+  const [setores, setSetores] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Filtros
-  const [buscaNome, setBuscaNome] = useState('');
-  const [filtroSecretaria, setFiltroSecretaria] = useState('');
-  const [filtroDepartamento, setFiltroDepartamento] = useState('');
-
-  // Edição
-  const [editandoId, setEditandoId] = useState(null);
-  const [editNome, setEditNome] = useState('');
-  const [editSec, setEditSec] = useState('');
-  const [editDep, setEditDep] = useState('');
-
   useEffect(() => {
-    async function loadDados() {
-      try {
-        const userSnapshot = await getDocs(collection(db, 'users'));
-        let listUsers = [];
-        userSnapshot.forEach((doc) => {
-          listUsers.push({ id: doc.id, ...doc.data() });
-        });
-        setUsuarios(listUsers);
-
-        const setorSnapshot = await getDocs(collection(db, 'setores'));
-        let listSetores = [];
-        setorSnapshot.forEach((doc) => {
-          listSetores.push({ id: doc.id, ...doc.data() });
-        });
-        setListaSetores(listSetores);
-      } catch (error) {
-        toast.error("Erro ao carregar dados.");
-      } finally {
-        setLoading(false);
-      }
+    async function loadSetores(){
+      const querySnapshot = await getDocs(collection(db, "setores"));
+      let lista = [];
+      querySnapshot.forEach((doc) => {
+        lista.push({
+          id: doc.id,
+          secretaria: doc.data().secretaria,
+          departamento: doc.data().departamento
+        })
+      })
+      setSetores(lista);
+      setLoading(false);
     }
-    loadDados();
-  }, []);
+    loadSetores();
+  }, [])
 
-  async function handleSaveEdit(id) {
-    try {
-      await updateDoc(doc(db, 'users', id), {
-        nome: editNome,
-        secretaria: editSec,
-        departamento: editDep
-      });
-      toast.success("Dados atualizados!");
-      setUsuarios(usuarios.map(u => u.id === id ? { ...u, nome: editNome, secretaria: editSec, departamento: editDep } : u));
-      setEditandoId(null);
-    } catch (error) {
-      toast.error("Erro ao salvar.");
+  async function handleRegister(e){
+    e.preventDefault();
+    if(nomeSecretaria !== '' && nomeDepartamento !== ''){
+      await addDoc(collection(db, "setores"), {
+        secretaria: nomeSecretaria,
+        departamento: nomeDepartamento
+      })
+      .then(() => {
+        setNomeSecretaria('');
+        setNomeDepartamento('');
+        toast.info("Setor cadastrado com sucesso!");
+        // Atualiza a lista localmente
+        setSetores([...setores, {secretaria: nomeSecretaria, departamento: nomeDepartamento}]);
+        // Opcional: recarregar do banco para pegar o ID correto
+        window.location.reload(); 
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Erro ao cadastrar.");
+      })
+    } else {
+      toast.error("Preencha todos os campos!");
     }
   }
 
-  if (!user.isadm) {
-    return (
-      <div>
-        <Header />
-        <div className="content">
-          <div className="container">
-            <span>Acesso restrito a administradores.</span>
-          </div>
-        </div>
-      </div>
-    );
+  async function handleDelete(id){
+    await deleteDoc(doc(db, "setores", id))
+    .then(()=>{
+        toast.success("Deletado com sucesso!");
+        setSetores(setores.filter(item => item.id !== id));
+    })
   }
 
-  const secretariasUnicas = [...new Set(listaSetores.map(s => s.secretaria))];
-  const usuariosFiltrados = usuarios.filter(u => {
-    return u.nome.toLowerCase().includes(buscaNome.toLowerCase()) &&
-           (filtroSecretaria === '' || u.secretaria === filtroSecretaria) &&
-           (filtroDepartamento === '' || u.departamento === filtroDepartamento);
-  });
-
-  return (
+  return(
     <div>
-      <Header />
+      <Header/>
       <div className="content">
-        <Title name="Consulta de Servidores"><FiUsers size={25} /></Title>
+        <Title name="Secretarias e Departamentos">
+          <FiUser size={25} />
+        </Title>
 
         <div className="container">
-          <div className="form-profile" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
-            <div>
-              <label>Nome</label>
-              <input 
-                type="text" 
-                placeholder="Pesquisar servidor..." 
-                value={buscaNome} 
-                onChange={(e) => setBuscaNome(e.target.value)} 
-              />
-            </div>
-            <div>
-              <label>Secretaria</label>
-              <select 
-                value={filtroSecretaria} 
-                onChange={(e) => { setFiltroSecretaria(e.target.value); setFiltroDepartamento(''); }}
-              >
-                <option value="">Todas</option>
-                {secretariasUnicas.map(sec => <option key={sec} value={sec}>{sec}</option>)}
-              </select>
-            </div>
-            <div>
-              <label>Departamento</label>
-              <select 
-                value={filtroDepartamento} 
-                onChange={(e) => setFiltroDepartamento(e.target.value)} 
-                disabled={!filtroSecretaria}
-              >
-                <option value="">Todos</option>
-                {listaSetores.filter(s => s.secretaria === filtroSecretaria).map(item => <option key={item.id} value={item.departamento}>{item.departamento}</option>)}
-              </select>
-            </div>
+          <form className="form-profile" onSubmit={handleRegister}>
+            <label>Nome da Secretaria</label>
+            <input 
+              type="text" 
+              placeholder="Ex: Secretaria de Saúde"
+              value={nomeSecretaria}
+              onChange={(e) => setNomeSecretaria(e.target.value)}
+            />
+
+            <label>Departamento</label>
+            <input 
+              type="text" 
+              placeholder="Ex: Recursos Humanos"
+              value={nomeDepartamento}
+              onChange={(e) => setNomeDepartamento(e.target.value)}
+            />
+
+            <button type="submit">Cadastrar</button>
+          </form>
+        </div>
+
+        <div className="container">
+          <div className="painel-grid">
+            {setores.map((item, index) => (
+               <div className="painel-item" key={item.id || index}>
+                 <div className="painel-linha">
+                    <label>Secretaria:</label>
+                    <span>{item.secretaria}</span>
+                 </div>
+                 <div className="painel-linha">
+                    <label>Departamento:</label>
+                    <span>{item.departamento}</span>
+                 </div>
+                 
+                 <button 
+                    onClick={() => handleDelete(item.id)}
+                    style={{ marginTop: '10px', backgroundColor: '#ff3333', color: '#FFF', border: 0, padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', maxWidth: '40px' }}
+                 >
+                    <FiTrash size={18} />
+                 </button>
+               </div>
+            ))}
           </div>
         </div>
-
-        <div className="container">
-          {loading ? <span>Carregando...</span> : (
-            <div className="painel-grid">
-              {usuariosFiltrados.map((item) => (
-                <div key={item.id} className="painel-item">
-                  
-                  {/* Campo Nome */}
-                  <div className="painel-linha">
-                    <label>Nome:</label>
-                    {editandoId === item.id ? (
-                      <input 
-                        type="text" 
-                        value={editNome} 
-                        onChange={(e) => setEditNome(e.target.value)} 
-                      />
-                    ) : (
-                      <span>{item.nome}</span>
-                    )}
-                  </div>
-
-                  {/* Campo Secretaria */}
-                  <div className="painel-linha">
-                    <label>Secretaria:</label>
-                    {editandoId === item.id ? (
-                      <select value={editSec} onChange={(e) => { setEditSec(e.target.value); setEditDep(''); }}>
-                        {secretariasUnicas.map(sec => <option key={sec} value={sec}>{sec}</option>)}
-                      </select>
-                    ) : (
-                      <span>{item.secretaria}</span>
-                    )}
-                  </div>
-
-                  {/* Campo Departamento */}
-                  <div className="painel-linha">
-                    <label>Departamento:</label>
-                    {editandoId === item.id ? (
-                      <select value={editDep} onChange={(e) => setEditDep(e.target.value)}>
-                        {listaSetores.filter(s => s.secretaria === editSec).map(s => <option key={s.id} value={s.departamento}>{s.departamento}</option>)}
-                      </select>
-                    ) : (
-                      <span>{item.departamento}</span>
-                    )}
-                  </div>
-
-                  {/* Botões de Ação */}
-                  <div className="painel-actions">
-                    {editandoId === item.id ? (
-                      <>
-                        <button className="action" style={{ backgroundColor: '#1fcc44' }} onClick={() => handleSaveEdit(item.id)}>
-                          <FiCheck size={20} color="#FFF" />
-                        </button>
-                        <button className="action" style={{ backgroundColor: '#999' }} onClick={() => setEditandoId(null)}>
-                          <FiX size={20} color="#FFF" />
-                        </button>
-                      </>
-                    ) : (
-                      <button className="action" style={{ backgroundColor: '#F6A935' }} onClick={() => { setEditandoId(item.id); setEditNome(item.nome); setEditSec(item.secretaria); setEditDep(item.departamento); }}>
-                        <FiEdit2 size={20} color="#FFF" />
-                      </button>
-                    )}
-                  </div>
-
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        
       </div>
     </div>
-  );
+  )
 }
