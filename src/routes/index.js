@@ -5,6 +5,7 @@ import SignUp from '../pages/SignUp';
 import Dashboard from '../pages/Dashboard';
 import Profile from '../pages/Profile';
 import Customers from '../pages/Customers';
+import Servidores from '../pages/Servidores'; // <--- VERIFIQUE ESTA IMPORTAÇÃO
 import New from '../pages/New';
 import Settings from '../pages/Settings'; 
 import Private from './private';
@@ -18,8 +19,11 @@ function RoutesApp(){
       <Route path="/dashboard" element={ <Private><Dashboard/></Private> } />
       <Route path="/profile" element={ <Private><Profile/></Private> } />
       
-      {/* CORREÇÃO: Alterado de /servidores para /customers para o botão funcionar */}
+      {/* Rota de Secretarias (antiga Customers) */}
       <Route path="/customers" element={ <Private><Customers/></Private> } />
+
+      {/* Rota de Servidores (VERIFIQUE SE ESTA LINHA EXISTE) */}
+      <Route path="/servidores" element={ <Private><Servidores/></Private> } />
       
       <Route path="/new" element={ <Private><New/></Private> } />
       <Route path="/new/:id" element={ <Private><New/></Private> } />
