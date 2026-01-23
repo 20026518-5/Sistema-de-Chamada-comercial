@@ -1,13 +1,11 @@
+/* src/routes/index.js */
 import { Routes, Route } from 'react-router-dom';
 
 import SignIn from '../pages/SignIn';
 import SignUp from '../pages/SignUp';
 import Dashboard from '../pages/Dashboard';
 import Profile from '../pages/Profile';
-import Customers from '../pages/Customers'; // Este é o componente que agora é "Servidores"
-import New from '../pages/New';
-import Settings from '../pages/Settings'; 
-
+import Servidores from '../pages/Customers'; // O componente que editamos chama Servidores
 import Private from './private';
 
 function RoutesApp(){
@@ -15,17 +13,12 @@ function RoutesApp(){
     <Routes>
       <Route path="/" element={ <SignIn/> } />
       <Route path="/register" element={ <SignUp/> } />
-
+      
       <Route path="/dashboard" element={ <Private><Dashboard/></Private> } />
       <Route path="/profile" element={ <Private><Profile/></Private> } />
       
-      {/* Alterado de /customers para /servidores conforme solicitado */}
-      <Route path="/servidores" element={ <Private><Customers/></Private> } />
-      
-      <Route path="/new" element={ <Private><New/></Private> } />
-      <Route path="/new/:id" element={ <Private><New/></Private> } />
-      
-      <Route path="/settings" element={ <Private><Settings/></Private> } />
+      {/* VERIFIQUE SE ESTA LINHA EXISTE E SE O CAMINHO ESTÁ CORRETO */}
+      <Route path="/customers" element={ <Private><Servidores/></Private> } />
     </Routes>
   )
 }
