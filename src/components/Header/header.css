@@ -3,11 +3,11 @@
   padding: 0;
   background-color: #181c2e;
   position: fixed;
-  left: 0; /* Garante que fique encostado na esquerda */
-  top: 0;  /* Garante que comece do topo */
+  left: 0;
+  top: 0;
   height: 100vh;
   overflow: auto;
-  width: 200px; /* Largura fixa da sidebar */
+  width: 200px;
   transition: background 0.3s;
   z-index: 99;
 }
@@ -58,10 +58,40 @@
   margin-right: 0.8rem;
 }
 
+/* --- NOVO CSS DO SELETOR DE TEMA (SUPERIOR DIREITO) --- */
+.theme-floater {
+  position: fixed;
+  top: 20px;
+  right: 30px;
+  z-index: 1000; /* Garante que fique acima de tudo */
+  display: flex;
+  align-items: center;
+  background-color: rgba(24, 28, 46, 0.9); /* Fundo semi-transparente para leitura */
+  padding: 8px 15px;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.theme-floater label {
+  color: #FFF;
+  margin-right: 10px;
+  font-size: 0.9rem;
+}
+
+.theme-floater select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  background-color: #FFF;
+  color: #000;
+}
+
 /* --- CLASSE QUE CORRIGE O CONTEÚDO --- */
 .content {
-  margin-left: 200px; /* Empurra o conteúdo para a direita */
+  margin-left: 200px;
   padding: 20px;
+  padding-top: 70px; /* Adicionado padding extra no topo para o conteúdo não bater no botão */
 }
 
 /* Ajuste Mobile */
@@ -69,7 +99,7 @@
   .sidebar {
     width: 100%;
     height: auto;
-    position: relative; /* No mobile ela deixa de ser fixa */
+    position: relative;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -91,8 +121,15 @@
     margin-right: 0;
   }
 
-  /* Remove a margem no mobile pois a sidebar fica no topo */
   .content {
     margin-left: 0;
+  }
+  
+  /* Ajuste do botão de tema no mobile para não cobrir o menu */
+  .theme-floater {
+    top: auto;
+    bottom: 20px;
+    right: 20px;
+    opacity: 0.9;
   }
 }
