@@ -1,21 +1,11 @@
-import { BrowserRouter } from 'react-router-dom';
-import RoutesApp from './routes';
-import AuthProvider from './contexts/auth';
-import ThemeProvider from './contexts/ThemeContext'; // <--- Importe aqui
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css'; // Importa o CSS global (que vi que você tem na lista de arquivos)
+import App from './App'; // Importa o componente App que já configura as rotas e contextos
 
-function App() {
-  return (
-    <BrowserRouter>
-      <AuthProvider>
-        <ThemeProvider> {/* <--- Envolva as rotas aqui */}
-          <ToastContainer autoClose={3000} />
-          <RoutesApp />
-        </ThemeProvider>
-      </AuthProvider>
-    </BrowserRouter>
-  );
-}
-
-export default App;
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
