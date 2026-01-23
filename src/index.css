@@ -1,6 +1,45 @@
-/* ... Mantenha o :root e body anteriores ... */
+/* --- DEFINIÇÃO DAS VARIÁVEIS DE CORES --- */
+:root {
+  /* Tema Claro (Padrão) */
+  --body-bg: #f8f8f8;
+  --text-color: #121212;
+  --panel-bg: #FFFFFF;
+  --border-color: #ddd;
+  --sidebar-bg: #181c2e;
+}
 
-/* Estilos para os Painéis Estruturados */
+[data-theme="dark"] {
+  /* Tema Escuro */
+  --body-bg: #121212;       /* Fundo da página escuro */
+  --text-color: #f1f1f1;    /* Texto claro */
+  --panel-bg: #1f2233;      /* Fundo dos painéis/cards (cinza escuro) */
+  --border-color: #444;     /* Bordas mais sutis */
+  --sidebar-bg: #181c2e;    /* Sidebar mantém a cor ou pode mudar se quiser */
+}
+
+/* --- ESTILOS GERAIS --- */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* APLICA AS VARIÁVEIS AQUI */
+  background-color: var(--body-bg);
+  color: var(--text-color);
+  
+  /* Transição suave ao trocar de tema */
+  transition: background-color 0.4s, color 0.4s;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* --- ESTILOS PARA OS PAINÉIS ESTRUTURADOS --- */
 .painel-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -9,13 +48,14 @@
 }
 
 .painel-item {
-  background-color: var(--panel-bg);
+  background-color: var(--panel-bg); /* Usa a variável que muda com o tema */
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: background-color 0.4s, border-color 0.4s;
 }
 
 .painel-linha {
@@ -24,19 +64,30 @@
   flex-direction: column;
 }
 
-/* O !important aqui garante que a cor do tema sobrescreva o profile.css */
+/* Garante que os labels mudem de cor */
 .painel-linha label {
   font-weight: bold;
   font-size: 0.85rem;
   margin-bottom: 5px;
   color: var(--text-color) !important; 
   opacity: 0.8;
+  transition: color 0.4s;
 }
 
+/* Garante que inputs e selects acompanhem o tema */
 .painel-linha span, 
 .painel-linha input, 
 .painel-linha select {
   font-size: 1rem;
   color: var(--text-color) !important;
   background-color: transparent;
+  border: 1px solid var(--border-color); /* Adicionei borda para ficar visível no input */
+  padding: 5px;
+  border-radius: 4px;
+}
+
+/* Remove a borda dos spans se não quiser que pareçam inputs */
+.painel-linha span {
+  border: none;
+  padding: 0;
 }
