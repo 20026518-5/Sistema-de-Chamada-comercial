@@ -24,6 +24,23 @@ export default function New(){
   const [editId, setEditId] = useState(false);
 
   useEffect(() => {
+      const loadId = async (list) => {
+    try {
+      const docRef = doc(db, 'chamados', id);
+      const snapshot = await getDoc(docRef);
+      setAssunto(snapshot.data().assunto);
+      setComplemento(snapshot.data().complemento);
+      setStatus(snapshot.data().status);
+      
+      let clienteIndex = list.findIndex(item => item.id === snapshot.data().clienteId);
+      setCustomerSelected(clienteIndex !== -1 ? clienteIndex : 0);
+      setEditId(true);
+    } catch (error) {
+      toast.error('Chamado não encontrado');
+      setEditId(false);
+    }
+  }
+    
     async function loadingCustomers(){
       try {
         const listRef = collection(db, 'customers');
@@ -54,23 +71,6 @@ export default function New(){
         setLoadingCustomer(false);
     }
   }, [id, user.isadm]);
-
-  const loadId = async (list) => {
-    try {
-      const docRef = doc(db, 'chamados', id);
-      const snapshot = await getDoc(docRef);
-      setAssunto(snapshot.data().assunto);
-      setComplemento(snapshot.data().complemento);
-      setStatus(snapshot.data().status);
-      
-      let clienteIndex = list.findIndex(item => item.id === snapshot.data().clienteId);
-      setCustomerSelected(clienteIndex !== -1 ? clienteIndex : 0);
-      setEditId(true);
-    } catch (error) {
-      toast.error('Chamado não encontrado');
-      setEditId(false);
-    }
-  }
 
   const handleRegister = async (e) => {
     e.preventDefault();
