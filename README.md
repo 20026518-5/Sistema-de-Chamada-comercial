@@ -6,9 +6,9 @@
 - **Desenvolvido por:** [Bruna Eduarda](https://www.linkedin.com/in/bruna-eduarda-a06a1b18b/)  
 - **Projeto original:** [GitHub - Sistema de Chamados](https://github.com/BrunaEduarda03/sistema-de-chamados?tab=readme-ov-file/)  
 - **Licença:** Este projeto está licenciado sob a [licença MIT](LICENSE).  
-- **Adaptado por:** Departamento de Tecnologia da Prefeitura de Buritis-RO  
+- **Adaptado por:** Lucas Vinicius Sampaio Lima.  
 
-O projeto tem como objetivo desenvolver uma aplicação de sistema de chamados para o registro de atendimentos do Departamento de Tecnologia da Prefeitura de Buritis-RO.  
+O projeto tem como objetivo desenvolver uma aplicação de sistema de chamados para o registro de atendimentos para Departamento de Tecnologia.  
 </br>
 
 ## 🚀 Tecnologias
@@ -46,7 +46,9 @@ npm install
 # Inicie a aplicação na porta 3000
 npm start
 
+</br>
+
 Este projeto está licenciado sob a licença MIT.
 
 Desenvolvido por: Bruna Eduarda  
-Adaptado por: Departamento de Tecnologia de Buritis-RO
+Adaptado por: .[Lucas Vinicius Sampaio Lima](https://lucaslimati.netlify.app/)    
