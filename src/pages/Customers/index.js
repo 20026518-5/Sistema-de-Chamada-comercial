@@ -10,7 +10,6 @@ export default function Customers(){
   const [nomeSecretaria, setNomeSecretaria] = useState('');
   const [nomeDepartamento, setNomeDepartamento] = useState('');
   const [setores, setSetores] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadSetores(){
@@ -24,7 +23,6 @@ export default function Customers(){
         })
       })
       setSetores(lista);
-      setLoading(false);
     }
     loadSetores();
   }, [])
