@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, updateDoc, query, orderBy, limit, startAt, endAt } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
 import { FiPlusCircle } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
@@ -17,86 +17,129 @@ export default function New(){
   
   const [customers, setCustomers] = useState([]);
   const [loadingCustomer, setLoadingCustomer] = useState(true);
-  const [customerSelected, setCustomerSelected] = useState(0);
+  const [customerSelected, setCustomerSelected] = useState(''); // [CORREÇÃO] Agora armazena o ID, não o índice
   const [assunto, setAssunto] = useState('suporte');
   const [complemento, setComplemento] = useState('');
   const [status, setStatus] = useState('Em aberto');
   const [editId, setEditId] = useState(false);
+  
+  // [NOVO] Estado para o filtro de busca
+  const [busca, setBusca] = useState('');
 
   useEffect(() => {
-      const loadId = async (list) => {
-    try {
-      const docRef = doc(db, 'chamados', id);
-      const snapshot = await getDoc(docRef);
-      setAssunto(snapshot.data().assunto);
-      setComplemento(snapshot.data().complemento);
-      setStatus(snapshot.data().status);
-      
-      let clienteIndex = list.findIndex(item => item.id === snapshot.data().clienteId);
-      setCustomerSelected(clienteIndex !== -1 ? clienteIndex : 0);
-      setEditId(true);
-    } catch (error) {
-      toast.error('Chamado não encontrado');
-      setEditId(false);
-    }
-  }
-    
-    async function loadingCustomers(){
+    // Carrega o chamado se for edição
+    async function loadId(list) {
       try {
-        // [CORREÇÃO] Mudamos de 'customers' para 'setores' para buscar o que foi cadastrado
-        const listRef = collection(db, 'setores');
-        const snapshot = await getDocs(listRef);
-        let list = [];
+        const docRef = doc(db, 'chamados', id);
+        const snapshot = await getDoc(docRef);
+        setAssunto(snapshot.data().assunto);
+        setComplemento(snapshot.data().complemento);
+        setStatus(snapshot.data().status);
+        
+        // [CORREÇÃO] Define o ID do cliente selecionado diretamente
+        const storedId = snapshot.data().clienteId;
+        setCustomerSelected(storedId);
+        setEditId(true);
 
+        // [SEGURANÇA] Se o cliente salvo não estiver na lista inicial (top 20), precisamos buscá-lo
+        const clienteNaLista = list.some(item => item.id === storedId);
+        if(!clienteNaLista && storedId){
+           const docCliente = await getDoc(doc(db, 'setores', storedId));
+           if(docCliente.exists()){
+             const clienteFaltante = {
+                id: docCliente.id,
+                nomeEmpresa: `${docCliente.data().secretaria} - ${docCliente.data().departamento}`
+             };
+             setCustomers(old => [...old, clienteFaltante]);
+           }
+        }
+
+      } catch (error) {
+        toast.error('Chamado não encontrado');
+        setEditId(false);
+      }
+    }
+    
+    // Função de carregar clientes com Filtro
+    async function loadingCustomers(filtro = ''){
+      try {
+        const listRef = collection(db, 'setores');
+        let q;
+
+        if(filtro !== ''){
+          // [PERFORMANCE] Busca filtrada no banco (requer índice em 'secretaria' se der erro)
+          // Obs: startAt/endAt simulam um "começa com"
+          q = query(listRef, orderBy('secretaria'), startAt(filtro), endAt(filtro + '\uf8ff'), limit(20));
+        } else {
+          // [PERFORMANCE] Traz apenas os 20 primeiros
+          q = query(listRef, orderBy('secretaria'), limit(20));
+        }
+
+        const snapshot = await getDocs(q);
+        let list = [];
+        
         snapshot.forEach((doc) => {
           list.push({ 
             id: doc.id, 
-            // [ADAPTAÇÃO] Como não existe 'nomeEmpresa' em setores, criamos uma string combinada
             nomeEmpresa: `${doc.data().secretaria} - ${doc.data().departamento}` 
           });
         });
 
         if(snapshot.docs.length === 0){
-          setCustomers([ { id: '1', nomeEmpresa: 'NENHUM SETOR CADASTRADO' } ]);
-          setLoadingCustomer(false);
+          setCustomers([]);
           return;
         }
 
         setCustomers(list);
-        setLoadingCustomer(false);
+        
+        // Se não tiver selecionado nenhum e a lista carregou, seleciona o primeiro
+        if(!customerSelected && list.length > 0) {
+            setCustomerSelected(list[0].id);
+        }
 
+        setLoadingCustomer(false);
+        
         if(id) await loadId(list);
 
       } catch (error) {
-        console.log(error); // Adicionado log para ajudar em debugs
+        console.log(error);
         setLoadingCustomer(false);
         setCustomers([ { id: '1', nomeEmpresa: 'ERRO AO BUSCAR' } ]);
       }
     }
     
     if(user.isadm || id){
-        loadingCustomers();
+        loadingCustomers(busca);
     } else {
         setLoadingCustomer(false);
     }
-  }, [id, user.isadm]);
+  }, [id, user.isadm, busca]); // [ATENÇÃO] 'busca' na dependência recarrega ao digitar
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
+      // [CORREÇÃO] Encontra o objeto completo do cliente baseando-se no ID selecionado
+      const clienteObj = customers.find(c => c.id === customerSelected);
+      
+      // Validação extra caso a lista esteja vazia ou erro
+      if(!clienteObj && user.isadm) {
+        toast.error('Selecione um cliente válido');
+        return;
+      }
+
       if(editId){
         const docRef = doc(db, 'chamados', id);
         const updateData = {
           assunto: assunto,
           status: status,
           complemento: complemento,
-          updatedBy: user.nome, // Auditoria
-          updatedAt: new Date() // Auditoria
+          updatedBy: user.nome,
+          updatedAt: new Date()
         };
 
         if(user.isadm){
-            updateData.cliente = customers[customerSelected].nomeEmpresa;
-            updateData.clienteId = customers[customerSelected].id;
+            updateData.cliente = clienteObj.nomeEmpresa;
+            updateData.clienteId = clienteObj.id;
         }
 
         await updateDoc(docRef, updateData);
@@ -117,8 +160,8 @@ export default function New(){
       };
 
       if(user.isadm){
-        novoChamado.cliente = customers[customerSelected].nomeEmpresa;
-        novoChamado.clienteId = customers[customerSelected].id;
+        novoChamado.cliente = clienteObj.nomeEmpresa;
+        novoChamado.clienteId = clienteObj.id;
       } else {
         novoChamado.cliente = user.nome;
         novoChamado.clienteId = user.uid;
@@ -145,6 +188,16 @@ export default function New(){
             {user.isadm && (
               <>
                 <label>Unidade / Cliente:</label>
+                
+                {/* [NOVO] Input de Filtro para buscar no banco */}
+                <input 
+                  type="text" 
+                  placeholder="Filtrar por nome da secretaria..."
+                  value={busca}
+                  onChange={(e) => setBusca(e.target.value)}
+                  style={{ marginBottom: '5px' }}
+                />
+
                 { loadingCustomer ? (
                   <div className="loading-field">
                     <Loading size={20} color="#121212" />
@@ -152,8 +205,8 @@ export default function New(){
                   </div>
                 ) : (
                   <select value={customerSelected} onChange={(e) => setCustomerSelected(e.target.value)}>
-                    {customers.map((item, index) => (
-                      <option key={index} value={index}>{item.nomeEmpresa}</option>
+                    {customers.map((item) => (
+                      <option key={item.id} value={item.id}>{item.nomeEmpresa}</option>
                     ))}
                   </select>
                 )}
