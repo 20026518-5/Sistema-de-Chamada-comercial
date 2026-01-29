@@ -43,23 +43,32 @@ export default function New(){
     
     async function loadingCustomers(){
       try {
-        const listRef = collection(db, 'customers');
+        // [CORREÇÃO] Mudamos de 'customers' para 'setores' para buscar o que foi cadastrado
+        const listRef = collection(db, 'setores');
         const snapshot = await getDocs(listRef);
         let list = [];
+
         snapshot.forEach((doc) => {
-          list.push({ id: doc.id, nomeEmpresa: doc.data().nomeEmpresa });
+          list.push({ 
+            id: doc.id, 
+            // [ADAPTAÇÃO] Como não existe 'nomeEmpresa' em setores, criamos uma string combinada
+            nomeEmpresa: `${doc.data().secretaria} - ${doc.data().departamento}` 
+          });
         });
 
         if(snapshot.docs.length === 0){
-          setCustomers([ { id: '1', nomeEmpresa: 'FREELA' } ]);
+          setCustomers([ { id: '1', nomeEmpresa: 'NENHUM SETOR CADASTRADO' } ]);
           setLoadingCustomer(false);
           return;
         }
 
         setCustomers(list);
         setLoadingCustomer(false);
+
         if(id) await loadId(list);
+
       } catch (error) {
+        console.log(error); // Adicionado log para ajudar em debugs
         setLoadingCustomer(false);
         setCustomers([ { id: '1', nomeEmpresa: 'ERRO AO BUSCAR' } ]);
       }
