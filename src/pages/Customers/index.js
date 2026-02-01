@@ -3,7 +3,8 @@ import Header from '../../components/Header';
 import Title from '../../components/Title';
 import { FiUser, FiTrash } from 'react-icons/fi';
 import { db } from '../../services/firebaseConnection';
-import { addDoc, collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+// [ALTERAÇÃO 1] Trocamos deleteDoc por updateDoc
+import { addDoc, collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../../contexts/auth';
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +17,7 @@ export default function Customers(){
   const [nomeDepartamento, setNomeDepartamento] = useState('');
   const [setores, setSetores] = useState([]);
 
-  // Effect 1: Proteção da Rota (Apenas Admin)
+  // Proteção da Rota (Apenas Admin)
   useEffect(() => {
     if(!user.isadm){
       toast.error("Você não tem permissão para acessar esta página.");
@@ -24,22 +25,26 @@ export default function Customers(){
     }
   }, [user, navigate]);
 
-  // Effect 2: Carregar Setores
+  // Carregar Setores
   useEffect(() => {
     async function loadSetores(){
       const querySnapshot = await getDocs(collection(db, "setores"));
       let lista = [];
+      
       querySnapshot.forEach((doc) => {
-        lista.push({
-          id: doc.id,
-          secretaria: doc.data().secretaria,
-          departamento: doc.data().departamento
-        })
+        // [ALTERAÇÃO 2] Filtro Lógico: Só mostra se 'ativo' não for falso
+        // Isso garante que dados antigos (sem o campo) continuem aparecendo
+        if(doc.data().ativo !== false){
+            lista.push({
+              id: doc.id,
+              secretaria: doc.data().secretaria,
+              departamento: doc.data().departamento
+            })
+        }
       })
       setSetores(lista);
     }
     
-    // Só carrega se for admin, para evitar erros de permissão no console
     if(user.isadm){
         loadSetores();
     }
@@ -50,15 +55,13 @@ export default function Customers(){
     if(nomeSecretaria !== '' && nomeDepartamento !== ''){
       await addDoc(collection(db, "setores"), {
         secretaria: nomeSecretaria,
-        departamento: nomeDepartamento
+        departamento: nomeDepartamento,
+        ativo: true // [ALTERAÇÃO 3] Define como ativo ao criar
       })
       .then(() => {
         setNomeSecretaria('');
         setNomeDepartamento('');
         toast.info("Setor cadastrado com sucesso!");
-        // Atualiza a lista localmente
-        setSetores([...setores, {secretaria: nomeSecretaria, departamento: nomeDepartamento}]);
-        // Opcional: recarregar a página para limpar estados ou garantir sincronia
         window.location.reload(); 
       })
       .catch((error) => {
@@ -71,18 +74,21 @@ export default function Customers(){
   }
 
   async function handleDelete(id){
-    await deleteDoc(doc(db, "setores", id))
+    // [ALTERAÇÃO 4] Soft Delete: Atualiza para false em vez de deletar
+    await updateDoc(doc(db, "setores", id), {
+        ativo: false
+    })
     .then(()=>{
-        toast.success("Deletado com sucesso!");
+        toast.success("Desativado com sucesso!");
+        // Remove da lista visualmente
         setSetores(setores.filter(item => item.id !== id));
     })
     .catch((error) => {
         console.log(error);
-        toast.error("Erro ao deletar.");
+        toast.error("Erro ao desativar.");
     })
   }
 
-  // Se não for admin, não renderiza nada enquanto redireciona
   if(!user.isadm) return null;
 
   return(
@@ -131,6 +137,7 @@ export default function Customers(){
                  <button 
                     onClick={() => handleDelete(item.id)}
                     style={{ marginTop: '10px', backgroundColor: '#ff3333', color: '#FFF', border: 0, padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', maxWidth: '40px' }}
+                    title="Desativar Setor"
                  >
                     <FiTrash size={18} />
                  </button>
