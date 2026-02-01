@@ -61,17 +61,15 @@ export default function New(){
     }
     
     // Função de carregar clientes com Filtro
-    async function loadingCustomers(filtro = ''){
+async function loadingCustomers(filtro = ''){
       try {
         const listRef = collection(db, 'setores');
         let q;
 
         if(filtro !== ''){
-          // [PERFORMANCE] Busca filtrada no banco (requer índice em 'secretaria' se der erro)
-          // Obs: startAt/endAt simulam um "começa com"
+          // Mantemos a query de busca visual
           q = query(listRef, orderBy('secretaria'), startAt(filtro), endAt(filtro + '\uf8ff'), limit(20));
         } else {
-          // [PERFORMANCE] Traz apenas os 20 primeiros
           q = query(listRef, orderBy('secretaria'), limit(20));
         }
 
@@ -79,20 +77,30 @@ export default function New(){
         let list = [];
         
         snapshot.forEach((doc) => {
-          list.push({ 
-            id: doc.id, 
-            nomeEmpresa: `${doc.data().secretaria} - ${doc.data().departamento}` 
-          });
+          // [ALTERAÇÃO] Filtro de Soft Delete
+          // Se o setor foi "excluído" (ativo: false), ele não entra na lista
+          if(doc.data().ativo !== false){
+             list.push({ 
+               id: doc.id, 
+               nomeEmpresa: `${doc.data().secretaria} - ${doc.data().departamento}` 
+             });
+          }
         });
 
-        if(snapshot.docs.length === 0){
-          setCustomers([]);
+        if(list.length === 0){
+          // Ajuste visual caso a filtragem remova tudo
+          if(snapshot.docs.length > 0 && list.length === 0){
+             // Se o banco retornou dados mas todos eram inativos
+             setCustomers([]); 
+          } else {
+             setCustomers([]);
+          }
           return;
         }
 
         setCustomers(list);
         
-        // Se não tiver selecionado nenhum e a lista carregou, seleciona o primeiro
+        // Seleciona o primeiro automaticamente se não houver seleção prévia
         if(!customerSelected && list.length > 0) {
             setCustomerSelected(list[0].id);
         }
