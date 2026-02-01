@@ -1,16 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import Header from '../../components/Header';
 import Title from '../../components/Title';
 import { FiUser, FiTrash } from 'react-icons/fi';
 import { db } from '../../services/firebaseConnection';
 import { addDoc, collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
+import { AuthContext } from '../../contexts/auth';
+import { useNavigate } from 'react-router-dom';
 
 export default function Customers(){
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const [nomeSecretaria, setNomeSecretaria] = useState('');
   const [nomeDepartamento, setNomeDepartamento] = useState('');
   const [setores, setSetores] = useState([]);
 
+  // Effect 1: Proteção da Rota (Apenas Admin)
+  useEffect(() => {
+    if(!user.isadm){
+      toast.error("Você não tem permissão para acessar esta página.");
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
+
+  // Effect 2: Carregar Setores
   useEffect(() => {
     async function loadSetores(){
       const querySnapshot = await getDocs(collection(db, "setores"));
@@ -24,8 +38,12 @@ export default function Customers(){
       })
       setSetores(lista);
     }
-    loadSetores();
-  }, [])
+    
+    // Só carrega se for admin, para evitar erros de permissão no console
+    if(user.isadm){
+        loadSetores();
+    }
+  }, [user.isadm]);
 
   async function handleRegister(e){
     e.preventDefault();
@@ -40,7 +58,7 @@ export default function Customers(){
         toast.info("Setor cadastrado com sucesso!");
         // Atualiza a lista localmente
         setSetores([...setores, {secretaria: nomeSecretaria, departamento: nomeDepartamento}]);
-        // Opcional: recarregar do banco para pegar o ID correto
+        // Opcional: recarregar a página para limpar estados ou garantir sincronia
         window.location.reload(); 
       })
       .catch((error) => {
@@ -58,7 +76,14 @@ export default function Customers(){
         toast.success("Deletado com sucesso!");
         setSetores(setores.filter(item => item.id !== id));
     })
+    .catch((error) => {
+        console.log(error);
+        toast.error("Erro ao deletar.");
+    })
   }
+
+  // Se não for admin, não renderiza nada enquanto redireciona
+  if(!user.isadm) return null;
 
   return(
     <div>
