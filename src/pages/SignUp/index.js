@@ -23,17 +23,23 @@ export default function SignUp() {
     localStorage.setItem('@theme', theme);
   }, [theme]);
 
-  useEffect(() => {
+ 
+   useEffect(() => {
     async function loadSetores() {
       const querySnapshot = await getDocs(collection(db, "setores"));
       let lista = [];
+      
       querySnapshot.forEach((doc) => {
-        lista.push({
-          id: doc.id,
-          secretaria: doc.data().secretaria,
-          departamento: doc.data().departamento
-        });
+        // [ALTERAÇÃO] Só adiciona na lista se 'ativo' for diferente de false
+        if (doc.data().ativo !== false) {
+          lista.push({
+            id: doc.id,
+            secretaria: doc.data().secretaria,
+            departamento: doc.data().departamento
+          });
+        }
       });
+      
       setListaSetores(lista);
     }
     loadSetores();
