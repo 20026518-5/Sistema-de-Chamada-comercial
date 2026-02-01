@@ -145,3 +145,23 @@ a:hover {
   outline: none;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
+
+/* --- CORREÇÃO DE VISIBILIDADE DO SELECT (LISTA SUSPENSA) --- */
+/* Força a cor preta e fundo branco para Selects e Options em qualquer tema */
+select, option {
+  color: #000 !important;
+  background-color: #FFF !important;
+}
+
+/* Garante especificidade para o formulário de login/cadastro */
+.login form select {
+  color: #000 !important;
+  background-color: #FFF !important;
+  border: 1px solid #ddd; /* Mantém a borda visível */
+}
+
+/* Ajuste específico para quando as opções estão abertas */
+.login form select option {
+  color: #000 !important;
+  background-color: #FFF !important;
+}
