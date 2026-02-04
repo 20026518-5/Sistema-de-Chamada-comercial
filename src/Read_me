@@ -1,0 +1,189 @@
+================================================================================
+MANUAL DE MAPEAMENTO DO BANCO DE DADOS - SISTEMA DE CHAMADOS (FIREBASE)
+================================================================================
+
+Este documento descreve a estrutura do banco de dados Firestore, regras de 
+segurança e índices necessários para o funcionamento do sistema.
+
+--------------------------------------------------------------------------------
+1. COLEÇÃO: users
+--------------------------------------------------------------------------------
+Descrição: Armazena perfis de usuários e administradores.
+Identificador (ID): UID gerado pelo Firebase Authentication.
+
+CAMPOS:
+* uid (String) [Obrigatório]
+  - Identificador único (igual ao Auth ID).
+
+* nome (String) [Obrigatório]
+  - Nome completo do usuário.
+
+* email (String) [Obrigatório]
+  - E-mail corporativo utilizado no login.
+
+* secretaria (String) [Obrigatório]
+  - Secretaria de origem do servidor.
+
+* departamento (String) [Obrigatório]
+  - Departamento de origem do servidor.
+
+* isadm (Boolean) [Obrigatório]
+  - Define nível de acesso.
+  - true: Administrador (vê todos os chamados, gerencia setores).
+  - false: Usuário Comum (vê apenas próprios chamados).
+
+* avatarUrl (String) [Opcional]
+  - URL da foto de perfil. Pode ser null.
+
+--------------------------------------------------------------------------------
+2. COLEÇÃO: setores (Antigo Customers)
+--------------------------------------------------------------------------------
+Descrição: Unidades organizacionais disponíveis para abertura de chamados.
+Nota: Utiliza "Soft Delete" (Exclusão Lógica).
+
+CAMPOS:
+* secretaria (String) [Obrigatório]
+  - Nome da Secretaria (ex: Saúde, Educação).
+
+* departamento (String) [Obrigatório]
+  - Nome do Departamento (ex: RH, TI).
+
+* ativo (Boolean) [Obrigatório]
+  - Controla a visibilidade do setor.
+  - true: Visível em novos chamados e cadastros.
+  - false: "Excluído" (mantido apenas para histórico de chamados antigos).
+
+--------------------------------------------------------------------------------
+3. COLEÇÃO: chamados
+--------------------------------------------------------------------------------
+Descrição: Tickets de suporte. Utiliza desnormalização (cópia de dados) para
+manter a integridade histórica dos registros.
+
+CAMPOS GERAIS:
+* created (Timestamp) [Obrigatório]
+  - Data e hora de criação do chamado.
+
+* assunto (String) [Obrigatório]
+  - Categoria (ex: Suporte, Visita Técnica, Financeiro).
+
+* status (String) [Obrigatório]
+  - Estado atual (Em aberto, Em progresso, Atendido).
+
+* complemento (String) [Opcional]
+  - Descrição detalhada do problema.
+
+CAMPOS DO SOLICITANTE (SNAPSHOT HISTÓRICO):
+* userId (String) [Obrigatório]
+  - ID do usuário que abriu (Referência à coleção 'users').
+
+* userName (String) [Obrigatório]
+  - Nome do usuário no momento da abertura.
+
+* secretaria (String) [Obrigatório]
+  - Secretaria do usuário no momento da abertura.
+
+* departamento (String) [Obrigatório]
+  - Departamento do usuário no momento da abertura.
+
+CAMPOS DO DESTINO (SNAPSHOT HISTÓRICO):
+* clienteId (String) [Obrigatório]
+  - ID do setor selecionado (Referência à coleção 'setores').
+
+* cliente (String) [Obrigatório]
+  - String combinada "Secretaria - Departamento" para exibição rápida.
+
+CAMPOS DE AUDITORIA:
+* updatedBy (String) [Opcional]
+  - Nome de quem realizou a última alteração.
+
+* updatedAt (Timestamp) [Opcional]
+  - Data e hora da última alteração.
+
+================================================================================
+CONFIGURAÇÕES OBRIGATÓRIAS (CONSOLE FIREBASE)
+================================================================================
+
+A. REGRAS DE SEGURANÇA (FIRESTORE RULES)
+Copie e cole o código abaixo na aba "Rules" do Firestore:
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Função auxiliar para verificar se o usuário é admin
+    function isAdmin() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isadm == true;
+    }
+
+    // Função auxiliar para verificar se o usuário está logado
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    // Regras para a coleção de Usuários
+    match /users/{userId} {
+      allow read: if isAuth(); // Permite ler dados básicos (para exibir nomes, etc)
+      
+      // Permite criar (sign up) se o usuário estiver logado e o campo isadm for false
+      allow create: if request.auth.uid == userId && request.resource.data.isadm == false;
+      
+      // Permite atualizar APENAS se não estiver tentando mudar o campo isadm
+      // OU se quem estiver fazendo a alteração for um admin
+      allow update: if (request.auth.uid == userId && request.resource.data.isadm == resource.data.isadm) 
+                    || isAdmin();
+    }
+
+    // Regras para a coleção de Setores (antigo Customers)
+		match /setores/{document=**} {
+      allow read: if true; // [ALTERADO] Permite que qualquer um leia (necessário para o cadastro)
+      allow write: if isAdmin(); // Apenas admin modifica
+    }
+
+    // Regras para a coleção de Chamados
+    match /chamados/{chamadoId} {
+      // Leitura: O dono do chamado OU um Admin podem ler
+      allow read: if isAuth() && (resource.data.userId == request.auth.uid || isAdmin());
+      
+      // Criação: Qualquer usuário logado pode criar
+      allow create: if isAuth() && request.resource.data.userId == request.auth.uid;
+      
+      // Atualização: O dono (para editar texto) ou Admin (para mudar status)
+      allow update: if isAuth() && (resource.data.userId == request.auth.uid || isAdmin());
+      
+      // Deletar: Apenas Admin (ou mantenha a lógica do seu código de 15min se preferir validar no back)
+      allow delete: if isAdmin(); 
+    }
+  }
+}
+
+
+--------------------------------------------------------------------------------
+
+B. ÍNDICES COMPOSTOS (INDEXES)
+Crie estes índices na aba "Indexes" para permitir os filtros do Dashboard.
+Todos devem ter escopo "Collection".
+
+1. Coleção: chamados
+   Campos: 
+     - userId (Ascending)
+     - created (Descending)
+
+2. Coleção: chamados
+   Campos: 
+     - secretaria (Ascending)
+     - created (Descending)
+
+3. Coleção: chamados
+   Campos: 
+     - status (Ascending)
+     - created (Descending)
+
+4. Coleção: chamados
+   Campos: 
+     - secretaria (Ascending)
+     - status (Ascending)
+     - created (Descending)
+
+================================================================================
+FIM DO DOCUMENTO
+================================================================================
