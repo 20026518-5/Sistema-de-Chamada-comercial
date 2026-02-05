@@ -4,13 +4,16 @@ import { AuthContext } from '../../contexts/auth';
 import { toast } from 'react-toastify'; 
 import './signin.css';
 import logo from '../../assets/logo.png';
-// Importando ícones para o rodapé
-import { FiCode, FiLayers, FiCheckCircle, FiUserCheck, FiGithub } from 'react-icons/fi';
+// Importando ícones (adicionei FiX para o botão de fechar)
+import { FiCode, FiLayers, FiCheckCircle, FiUserCheck, FiGithub, FiX } from 'react-icons/fi';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [theme, setTheme] = useState(localStorage.getItem('@theme') || 'light');
+  
+  // Estado para controlar a visibilidade do Modal de Boas-vindas
+  const [showModal, setShowModal] = useState(true);
 
   const { signIn, loadingAuth, resetPassword } = useContext(AuthContext);
 
@@ -44,6 +47,54 @@ export default function SignIn() {
 
   return (
     <div className="container-center">
+      
+      {/* --- INICIO DO MODAL DE BOAS-VINDAS --- */}
+      {showModal && (
+        <div className="welcome-modal-overlay">
+          <div className="welcome-modal-content">
+            <button className="welcome-close-icon" onClick={() => setShowModal(false)}>
+              <FiX size={25} />
+            </button>
+            
+            <h2>Bem-vindo(a)!</h2>
+            <p className="welcome-intro">
+              Olá, muito obrigado por acessar esse teste aberto, agradecemos o feedback para melhoria:
+            </p>
+
+            <div className="welcome-section">
+              <h3>Conta de usuario comum:</h3>
+              <p><strong>Usuário:</strong> teste_usuario</p>
+              <p><strong>E-mail:</strong> usuario-teste@hotmail.com</p>
+              <p><strong>Senha:</strong> Teste@2026</p>
+            </div>
+
+            <div className="welcome-section">
+              <h3>Conta de usuario Adm:</h3>
+              <p><strong>Usuário:</strong> teste_adm</p>
+              <p><strong>E-mail:</strong> adm-teste@hotmail.com</p>
+              <p><strong>Senha:</strong> Teste@2026</p>
+            </div>
+
+            <div className="welcome-credits">
+              <p><strong>Desenvolvido por:</strong> Bruna Eduarda</p>
+              <p>
+                <strong>Projeto original:</strong> <a href="https://github.com/BrunaEduarda03/sistema-de-chamados.git" target="_blank" rel="noreferrer">GitHub - Sistema de Chamados</a>
+              </p>
+              <p><strong>Licença:</strong> MIT</p>
+              <p><strong>Adaptado por:</strong> Lucas Vinicius Sampaio Lima</p>
+              <p>
+                <strong>Sistema de uso Local adaptado:</strong> <a href="https://github.com/20026518-5/Chamada-3.git" target="_blank" rel="noreferrer">GitHub - Versão Adaptada</a>
+              </p>
+            </div>
+
+            <button className="welcome-close-btn" onClick={() => setShowModal(false)}>
+              Entendi
+            </button>
+          </div>
+        </div>
+      )}
+      {/* --- FIM DO MODAL DE BOAS-VINDAS --- */}
+
       <div className="theme-selector-wrapper">
         <label>TEMA</label>
         <select value={theme} onChange={(e) => setTheme(e.target.value)}>
