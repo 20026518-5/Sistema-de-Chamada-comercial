@@ -4,7 +4,6 @@ import { AuthContext } from '../../contexts/auth';
 import { toast } from 'react-toastify'; 
 import './signin.css';
 import logo from '../../assets/logo.png';
-// Importando ícones, incluindo o FiX para fechar o modal
 import { FiCode, FiLayers, FiCheckCircle, FiUserCheck, FiGithub, FiX } from 'react-icons/fi';
 
 export default function SignIn() {
@@ -12,7 +11,6 @@ export default function SignIn() {
   const [password, setPassword] = useState('');
   const [theme, setTheme] = useState(localStorage.getItem('@theme') || 'light');
   
-  // Estado para controlar a janela de boas-vindas (inicia como true para aparecer ao abrir)
   const [showModal, setShowModal] = useState(true);
 
   const { signIn, loadingAuth, resetPassword } = useContext(AuthContext);
@@ -48,7 +46,7 @@ export default function SignIn() {
   return (
     <div className="container-center">
       
-      {/* --- INICIO DO MODAL DE BOAS-VINDAS --- */}
+      {/* --- MODAL DE BOAS-VINDAS --- */}
       {showModal && (
         <div className="welcome-modal-overlay">
           <div className="welcome-modal-content">
@@ -62,19 +60,19 @@ export default function SignIn() {
             
             <div className="welcome-body">
               <p className="welcome-intro">
-                Olá, muito obrigado por acessar esse teste aberto, agradecemos o feedback para melhoria:
+                Olá, muito obrigado por acessar esse teste aberto. Agradecemos o feedback para melhoria.
               </p>
 
               <div className="welcome-accounts">
                 <div className="account-box">
-                  <h3>Conta de usuário comum:</h3>
+                  <h3>Conta de Usuário Comum:</h3>
                   <p><strong>Usuário:</strong> teste_usuario</p>
                   <p><strong>E-mail:</strong> usuario-teste@hotmail.com</p>
                   <p><strong>Senha:</strong> Teste@2026</p>
                 </div>
 
                 <div className="account-box">
-                  <h3>Conta de usuário Adm:</h3>
+                  <h3>Conta de Usuário Adm:</h3>
                   <p><strong>Usuário:</strong> teste_adm</p>
                   <p><strong>E-mail:</strong> adm-teste@hotmail.com</p>
                   <p><strong>Senha:</strong> Teste@2026</p>
@@ -83,14 +81,10 @@ export default function SignIn() {
 
               <div className="welcome-credits">
                 <p><strong>Desenvolvido por:</strong> Bruna Eduarda</p>
-                <p>
-                  <strong>Projeto original:</strong> <a href="https://github.com/BrunaEduarda03/sistema-de-chamados.git" target="_blank" rel="noreferrer">GitHub - Sistema de Chamados</a>
-                </p>
+                <p><strong>Projeto original:</strong> <a href="https://github.com/BrunaEduarda03/sistema-de-chamados.git" target="_blank" rel="noreferrer">GitHub - Sistema de Chamados</a></p>
                 <p><strong>Licença:</strong> MIT</p>
                 <p><strong>Adaptado por:</strong> Lucas Vinicius Sampaio Lima</p>
-                <p>
-                  <strong>Sistema de uso Local adaptado:</strong> <a href="https://github.com/20026518-5/Chamada-3.git" target="_blank" rel="noreferrer">GitHub - Versão Adaptada</a>
-                </p>
+                <p><strong>Sistema Local:</strong> <a href="https://github.com/20026518-5/Chamada-3.git" target="_blank" rel="noreferrer">GitHub - Versão Adaptada</a></p>
               </div>
             </div>
 
@@ -100,8 +94,8 @@ export default function SignIn() {
           </div>
         </div>
       )}
-      {/* --- FIM DO MODAL DE BOAS-VINDAS --- */}
 
+      {/* --- SELETOR DE TEMA --- */}
       <div className="theme-selector-wrapper">
         <label>TEMA</label>
         <select value={theme} onChange={(e) => setTheme(e.target.value)}>
@@ -110,6 +104,24 @@ export default function SignIn() {
         </select>
       </div>
 
+      {/* --- NOVA COLINHA (CHEAT SHEET) LATERAL --- */}
+      <div className="login-cheat-sheet">
+        <h3>Dados para Teste</h3>
+        
+        <div className="cheat-item">
+          <h4>Admin</h4>
+          <p className="cheat-email">adm-teste@hotmail.com</p>
+          <p className="cheat-pass">Senha: <strong>Teste@2026</strong></p>
+        </div>
+
+        <div className="cheat-item">
+          <h4>Comum</h4>
+          <p className="cheat-email">usuario-teste@hotmail.com</p>
+          <p className="cheat-pass">Senha: <strong>Teste@2026</strong></p>
+        </div>
+      </div>
+
+      {/* --- ÁREA DE LOGIN --- */}
       <div className="login">
         <div className="login-area">
           <img src={logo} alt="Logo do sistema" />
@@ -145,10 +157,10 @@ export default function SignIn() {
               
         <footer className="footer-sistema">
           <p><FiCode /> Desenvolvido por: <strong>Bruna Eduarda</strong></p>
-          <p><FiLayers /> Projeto original: <a href="https://github.com/suelen-m-m/chamada-3" target="_blank" rel="noreferrer">GitHub - Sistema de Chamados</a></p>
+          <p><FiLayers /> Projeto original: <a href="https://github.com/suelen-m-m/chamada-3" target="_blank" rel="noreferrer">GitHub</a></p>
           <p><FiCheckCircle /> Licença: MIT</p>
           <p><FiUserCheck /> Adaptado por: <strong>Lucas Vinicius Sampaio Lima</strong></p>
-          <p><FiGithub /> GitHub: <a href="https://github.com/20026518-5" target="_blank" rel="noreferrer">https://github.com/20026518-5</a></p>
+          <p><FiGithub /> GitHub: <a href="https://github.com/20026518-5" target="_blank" rel="noreferrer">Meu Repositório</a></p>
         </footer>
       </div>
     </div>
