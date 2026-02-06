@@ -1,18 +1,43 @@
 /* =========================================
+   DEFINIÇÃO DE CORES ESPECÍFICAS PARA LOGIN
+   (Isso garante que o fundo nunca fique transparente)
+   ========================================= */
+:root {
+  /* Cores Padrão (Claro) */
+  --login-bg-page: #f8f8f8;       /* Fundo da página atrás do login */
+  --login-bg-card: #FFFFFF;       /* Fundo da caixa de login e do modal */
+  --login-bg-inner: #f0f0f5;      /* Fundo da área da logo e cabeçalhos */
+  --login-input-bg: #FFFFFF;      /* Fundo dos inputs */
+  --login-text: #121212;          /* Cor do texto */
+  --login-border: #ddd;           /* Cor da borda */
+}
+
+[data-theme="dark"] {
+  /* Cores Tema Escuro */
+  --login-bg-page: #121212;       
+  --login-bg-card: #1f2233;       /* Cinza escuro sólido para o modal/login */
+  --login-bg-inner: #2d3045;      /* Um pouco mais claro que o card */
+  --login-input-bg: #282b3d;      
+  --login-text: #f1f1f1;
+  --login-border: #444;
+}
+
+/* =========================================
    ESTILOS GERAIS DA TELA DE LOGIN
    ========================================= */
 .container-center {
   height: 100%;
+  min-height: 100vh; /* Garante que ocupe a tela toda */
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--background-color);
+  background-color: var(--login-bg-page); /* Usa a variável corrigida */
   flex-direction: column;
-  position: relative; /* Importante para o posicionamento relativo dos filhos */
+  position: relative;
 }
 
 .login {
-  background-color: var(--secondary-bg);
+  background-color: var(--login-bg-card); /* Fundo sólido garantido */
   width: 600px;
   display: flex;
   align-items: center;
@@ -21,10 +46,10 @@
   padding: 30px;
   border-radius: 5px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  z-index: 1; /* Garante que fique atrás do modal se necessário */
+  z-index: 1;
 }
 
-/* Responsividade para telas menores */
+/* Responsividade */
 @media (max-width: 650px) {
   .login {
     width: 90%;
@@ -32,7 +57,7 @@
 }
 
 .login-area {
-  background-color: var(--container-bg);
+  background-color: var(--login-bg-inner);
   width: 100%;
   display: flex;
   justify-content: center;
@@ -55,18 +80,18 @@ form {
 h1 {
   text-align: center;
   margin-bottom: 15px;
-  color: var(--text-color);
+  color: var(--login-text);
 }
 
 input {
   margin-bottom: 15px;
   height: 40px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--login-border);
   border-radius: 4px;
   padding: 10px;
   font-size: 15px;
-  background-color: var(--input-bg);
-  color: var(--text-color);
+  background-color: var(--login-input-bg);
+  color: var(--login-text);
 }
 
 button {
@@ -88,7 +113,7 @@ a {
   margin: 15px 0;
   text-align: center;
   cursor: pointer;
-  color: var(--text-color);
+  color: var(--login-text);
   text-decoration: none;
 }
 
@@ -96,18 +121,18 @@ a:hover {
   text-decoration: underline;
 }
 
-/* --- ESTILO DO RODAPÉ COMERCIAL --- */
+/* --- RODAPÉ --- */
 .footer-sistema {
   margin-top: 30px;
   padding-top: 20px;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--login-border);
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
   font-size: 0.8rem;
-  color: var(--text-color);
+  color: var(--login-text);
   opacity: 0.7;
 }
 
@@ -119,15 +144,10 @@ a:hover {
   text-align: center;
 }
 
-.footer-sistema svg {
-  color: var(--text-color);
-  font-size: 1.1em;
-}
-
 .footer-sistema a {
   margin: 0;
   font-weight: bold;
-  color: var(--text-color);
+  color: var(--login-text);
 }
 
 /* Seletor de Tema */
@@ -145,35 +165,24 @@ a:hover {
   font-size: 0.75rem;
   font-weight: bold;
   margin-bottom: 4px;
-  color: var(--text-color);
+  color: var(--login-text);
   opacity: 0.7;
 }
 
 .theme-selector-wrapper select {
   padding: 5px 10px;
   border-radius: 20px;
-  border: 1px solid var(--border-color);
-  background-color: var(--secondary-bg);
-  color: var(--text-color);
+  border: 1px solid var(--login-border);
+  background-color: var(--login-bg-card);
+  color: var(--login-text);
   font-size: 0.85rem;
   cursor: pointer;
   outline: none;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* Correção de visibilidade do Select */
+/* Correção forçada para o Select */
 select, option {
-  color: #000 !important;
-  background-color: #FFF !important;
-}
-
-.login form select {
-  color: #000 !important;
-  background-color: #FFF !important;
-  border: 1px solid #ddd;
-}
-
-.login form select option {
   color: #000 !important;
   background-color: #FFF !important;
 }
@@ -187,27 +196,27 @@ select, option {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.85); /* Fundo bem escuro para focar */
-  z-index: 9999; /* Garante que fique acima de TUDO */
+  background-color: rgba(0, 0, 0, 0.85); /* Fundo escuro atrás do modal */
+  z-index: 9999;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
-  backdrop-filter: blur(2px); /* Efeito de desfoque no fundo */
+  backdrop-filter: blur(2px);
 }
 
 .welcome-modal-content {
-  background-color: var(--secondary-bg); /* Respeita o tema dark/light */
-  color: var(--text-color);
+  background-color: var(--login-bg-card); /* AQUI ESTAVA O ERRO: agora usa cor sólida definida no topo */
+  color: var(--login-text);
   width: 100%;
-  max-width: 600px; /* Largura máxima controlada */
+  max-width: 600px;
   max-height: 95vh;
-  overflow-y: auto; /* Rolagem se a tela for pequena */
+  overflow-y: auto;
   padding: 0;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   position: relative;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--login-border);
   animation: modalFadeIn 0.3s ease-out;
 }
 
@@ -219,15 +228,15 @@ select, option {
 /* Cabeçalho do Modal */
 .welcome-header {
   padding: 20px;
-  background-color: var(--container-bg);
-  border-bottom: 1px solid var(--border-color);
+  background-color: var(--login-bg-inner);
+  border-bottom: 1px solid var(--login-border);
   text-align: center;
 }
 
 .welcome-header h2 {
   margin: 0;
   font-size: 1.5rem;
-  color: var(--text-color);
+  color: var(--login-text);
 }
 
 /* Botão Fechar (X) */
@@ -237,13 +246,9 @@ select, option {
   right: 15px;
   background: transparent;
   border: none;
-  color: var(--text-color);
+  color: var(--login-text);
   cursor: pointer;
   opacity: 0.7;
-  transition: opacity 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .welcome-close-icon:hover {
@@ -272,8 +277,8 @@ select, option {
 }
 
 .account-box {
-  background-color: var(--input-bg); /* Fundo sutil */
-  border: 1px solid var(--border-color);
+  background-color: var(--login-bg-inner); /* Destaque sutil */
+  border: 1px solid var(--login-border);
   padding: 15px;
   border-radius: 8px;
   border-left: 5px solid #181c2e;
@@ -282,23 +287,23 @@ select, option {
 .account-box h3 {
   margin: 0 0 10px 0;
   font-size: 1.1rem;
-  color: var(--text-color);
+  color: var(--login-text);
   font-weight: bold;
 }
 
 .account-box p {
   margin: 5px 0;
   font-size: 0.95rem;
-  color: var(--text-color);
+  color: var(--login-text);
 }
 
 /* Créditos */
 .welcome-credits {
   font-size: 0.85rem;
-  background-color: rgba(0,0,0,0.05); /* Fundo muito leve */
+  background-color: rgba(0,0,0,0.05);
   padding: 15px;
   border-radius: 8px;
-  border: 1px dashed var(--border-color);
+  border: 1px dashed var(--login-border);
 }
 
 .welcome-credits p {
@@ -312,10 +317,6 @@ select, option {
   color: #181c2e;
   font-weight: bold;
   text-decoration: none;
-}
-
-.welcome-credits a:hover {
-  text-decoration: underline;
 }
 
 /* Ajuste de link para Dark Mode */
