@@ -1,41 +1,236 @@
-/* ... Mantenha o CSS existente acima ... */
+/* =========================================
+   ESTILOS GERAIS DA TELA DE LOGIN
+   ========================================= */
+.container-center {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--background-color);
+  flex-direction: column;
+  position: relative; /* Importante para o posicionamento relativo dos filhos */
+}
 
-/* --- ESTILOS DO MODAL DE BOAS-VINDAS --- */
+.login {
+  background-color: var(--secondary-bg);
+  width: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 30px;
+  border-radius: 5px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1; /* Garante que fique atrás do modal se necessário */
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 650px) {
+  .login {
+    width: 90%;
+  }
+}
+
+.login-area {
+  background-color: var(--container-bg);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.login-area img {
+  width: 170px;
+  height: 170px;
+  padding: 20px;
+}
+
+form {
+  margin-top: 20px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: var(--text-color);
+}
+
+input {
+  margin-bottom: 15px;
+  height: 40px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 15px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+}
+
+button {
+  height: 40px;
+  border: 0;
+  border-radius: 4px;
+  background-color: #181c2e;
+  color: #fff;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #252b45;
+}
+
+a {
+  margin: 15px 0;
+  text-align: center;
+  cursor: pointer;
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* --- ESTILO DO RODAPÉ COMERCIAL --- */
+.footer-sistema {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.footer-sistema p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  text-align: center;
+}
+
+.footer-sistema svg {
+  color: var(--text-color);
+  font-size: 1.1em;
+}
+
+.footer-sistema a {
+  margin: 0;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+/* Seletor de Tema */
+.theme-selector-wrapper {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: 10;
+}
+
+.theme-selector-wrapper label {
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.theme-selector-wrapper select {
+  padding: 5px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  background-color: var(--secondary-bg);
+  color: var(--text-color);
+  font-size: 0.85rem;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Correção de visibilidade do Select */
+select, option {
+  color: #000 !important;
+  background-color: #FFF !important;
+}
+
+.login form select {
+  color: #000 !important;
+  background-color: #FFF !important;
+  border: 1px solid #ddd;
+}
+
+.login form select option {
+  color: #000 !important;
+  background-color: #FFF !important;
+}
+
+/* =========================================
+   ESTILOS DA JANELA DE BOAS-VINDAS (MODAL)
+   ========================================= */
 .welcome-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.75); /* Fundo escuro transparente */
-  z-index: 9999; /* Fica acima de tudo */
+  background-color: rgba(0, 0, 0, 0.85); /* Fundo bem escuro para focar */
+  z-index: 9999; /* Garante que fique acima de TUDO */
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
+  backdrop-filter: blur(2px); /* Efeito de desfoque no fundo */
 }
 
 .welcome-modal-content {
-  background-color: var(--secondary-bg); /* Adapta ao tema (claro/escuro) */
+  background-color: var(--secondary-bg); /* Respeita o tema dark/light */
   color: var(--text-color);
   width: 100%;
-  max-width: 550px;
-  max-height: 90vh; /* Se a tela for pequena, permite scroll */
-  overflow-y: auto;
-  padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  max-width: 600px; /* Largura máxima controlada */
+  max-height: 95vh;
+  overflow-y: auto; /* Rolagem se a tela for pequena */
+  padding: 0;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   position: relative;
   border: 1px solid var(--border-color);
-  animation: fadeIn 0.3s ease-in-out;
+  animation: modalFadeIn 0.3s ease-out;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
-/* Botão X no canto superior */
+/* Cabeçalho do Modal */
+.welcome-header {
+  padding: 20px;
+  background-color: var(--container-bg);
+  border-bottom: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.welcome-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--text-color);
+}
+
+/* Botão Fechar (X) */
 .welcome-close-icon {
   position: absolute;
   top: 15px;
@@ -44,74 +239,103 @@
   border: none;
   color: var(--text-color);
   cursor: pointer;
-  width: auto;
-  height: auto;
-  padding: 0;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.welcome-modal-content h2 {
-  text-align: center;
-  margin-bottom: 15px;
-  color: var(--text-color);
+.welcome-close-icon:hover {
+  opacity: 1;
+  color: #ff5f5f;
+}
+
+/* Corpo do Modal */
+.welcome-body {
+  padding: 25px;
 }
 
 .welcome-intro {
-  margin-bottom: 20px;
   text-align: center;
-  font-size: 1rem;
-  line-height: 1.5;
+  margin-bottom: 25px;
+  font-size: 1.05rem;
+  line-height: 1.6;
 }
 
-.welcome-section {
-  background-color: var(--container-bg); /* Destaque sutil */
+/* Área das Contas */
+.welcome-accounts {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.account-box {
+  background-color: var(--input-bg); /* Fundo sutil */
+  border: 1px solid var(--border-color);
   padding: 15px;
-  border-radius: 5px;
-  margin-bottom: 15px;
-  border-left: 4px solid #181c2e; /* Detalhe lateral */
+  border-radius: 8px;
+  border-left: 5px solid #181c2e;
 }
 
-.welcome-section h3 {
-  font-size: 1rem;
-  margin-bottom: 8px;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 5px;
-}
-
-.welcome-section p {
-  margin: 5px 0;
-  font-size: 0.95rem;
-}
-
-.welcome-credits {
-  margin-top: 20px;
-  font-size: 0.85rem;
-  padding-top: 15px;
-  border-top: 1px solid var(--border-color);
-}
-
-.welcome-credits p {
-  margin: 4px 0;
-}
-
-.welcome-credits a {
-  color: #181c2e; /* Cor destaque */
+.account-box h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
+  color: var(--text-color);
   font-weight: bold;
 }
 
-/* Ajuste para link no tema escuro se necessário, 
-   assumindo que o #181c2e pode ficar escuro demais no dark mode, 
-   você pode usar var(--text-color) ou uma cor fixa clara */
-[data-theme='dark'] .welcome-credits a {
-  color: #4f8aff; 
+.account-box p {
+  margin: 5px 0;
+  font-size: 0.95rem;
+  color: var(--text-color);
 }
 
+/* Créditos */
+.welcome-credits {
+  font-size: 0.85rem;
+  background-color: rgba(0,0,0,0.05); /* Fundo muito leve */
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px dashed var(--border-color);
+}
+
+.welcome-credits p {
+  margin: 6px 0;
+  line-height: 1.4;
+}
+
+.welcome-credits a {
+  margin: 0;
+  display: inline;
+  color: #181c2e;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.welcome-credits a:hover {
+  text-decoration: underline;
+}
+
+/* Ajuste de link para Dark Mode */
+[data-theme='dark'] .welcome-credits a {
+  color: #6495ED; 
+}
+
+/* Botão inferior grande */
 .welcome-close-btn {
-  margin-top: 20px;
-  width: 100%;
+  display: block;
+  width: calc(100% - 50px);
+  margin: 0 auto 25px auto;
   background-color: #181c2e;
-  height: 45px;
+  padding: 0;
+  font-size: 1rem;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
 .welcome-close-btn:hover {
   background-color: #252b45;
+  transform: translateY(-1px);
 }
