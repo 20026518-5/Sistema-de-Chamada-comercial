@@ -1,43 +1,41 @@
 /* =========================================
-   DEFINIÇÃO DE CORES ESPECÍFICAS PARA LOGIN
-   (Isso garante que o fundo nunca fique transparente)
+   DEFINIÇÃO DE CORES (Garante visibilidade)
    ========================================= */
 :root {
-  /* Cores Padrão (Claro) */
-  --login-bg-page: #f8f8f8;       /* Fundo da página atrás do login */
-  --login-bg-card: #FFFFFF;       /* Fundo da caixa de login e do modal */
-  --login-bg-inner: #f0f0f5;      /* Fundo da área da logo e cabeçalhos */
-  --login-input-bg: #FFFFFF;      /* Fundo dos inputs */
-  --login-text: #121212;          /* Cor do texto */
-  --login-border: #ddd;           /* Cor da borda */
+  --login-bg-page: #f8f8f8;
+  --login-bg-card: #FFFFFF;
+  --login-bg-inner: #f0f0f5;
+  --login-input-bg: #FFFFFF;
+  --login-text: #121212;
+  --login-border: #ddd;
 }
 
 [data-theme="dark"] {
-  /* Cores Tema Escuro */
   --login-bg-page: #121212;       
-  --login-bg-card: #1f2233;       /* Cinza escuro sólido para o modal/login */
-  --login-bg-inner: #2d3045;      /* Um pouco mais claro que o card */
+  --login-bg-card: #1f2233;       
+  --login-bg-inner: #2d3045;      
   --login-input-bg: #282b3d;      
   --login-text: #f1f1f1;
   --login-border: #444;
 }
 
 /* =========================================
-   ESTILOS GERAIS DA TELA DE LOGIN
+   ESTILOS GERAIS
    ========================================= */
 .container-center {
   height: 100%;
-  min-height: 100vh; /* Garante que ocupe a tela toda */
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--login-bg-page); /* Usa a variável corrigida */
+  background-color: var(--login-bg-page);
   flex-direction: column;
   position: relative;
+  padding: 20px 0; /* Espaço extra para scroll se necessário */
 }
 
 .login {
-  background-color: var(--login-bg-card); /* Fundo sólido garantido */
+  background-color: var(--login-bg-card);
   width: 600px;
   display: flex;
   align-items: center;
@@ -49,7 +47,7 @@
   z-index: 1;
 }
 
-/* Responsividade */
+/* Responsividade Login */
 @media (max-width: 650px) {
   .login {
     width: 90%;
@@ -121,7 +119,7 @@ a:hover {
   text-decoration: underline;
 }
 
-/* --- RODAPÉ --- */
+/* RODAPÉ */
 .footer-sistema {
   margin-top: 30px;
   padding-top: 20px;
@@ -150,7 +148,7 @@ a:hover {
   color: var(--login-text);
 }
 
-/* Seletor de Tema */
+/* SELETOR DE TEMA */
 .theme-selector-wrapper {
   position: absolute;
   top: 20px;
@@ -181,14 +179,122 @@ a:hover {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* Correção forçada para o Select */
 select, option {
   color: #000 !important;
   background-color: #FFF !important;
 }
 
 /* =========================================
-   ESTILOS DA JANELA DE BOAS-VINDAS (MODAL)
+   ESTILOS DA COLINHA LATERAL (NOVO)
+   ========================================= */
+.login-cheat-sheet {
+  position: absolute;
+  right: 40px; /* Distância da borda direita */
+  top: 50%;
+  transform: translateY(-50%); /* Centraliza verticalmente */
+  width: 260px;
+  background-color: var(--login-bg-card);
+  border: 1px solid var(--login-border);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  z-index: 5;
+  color: var(--login-text);
+  animation: slideInRight 0.6s ease-out;
+}
+
+.login-cheat-sheet h3 {
+  text-align: center;
+  margin: 0 0 15px 0;
+  font-size: 1.1rem;
+  border-bottom: 2px solid #181c2e;
+  padding-bottom: 8px;
+  color: var(--login-text);
+}
+
+.cheat-item {
+  margin-bottom: 15px;
+  background-color: var(--login-bg-inner);
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 4px solid #181c2e;
+}
+
+.cheat-item:last-child {
+  margin-bottom: 0;
+}
+
+.cheat-item h4 {
+  margin: 0 0 5px 0;
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: var(--login-text);
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.cheat-email {
+  margin: 3px 0;
+  font-size: 0.85rem;
+  word-break: break-all;
+  font-family: monospace;
+}
+
+.cheat-pass {
+  margin: 3px 0;
+  font-size: 0.9rem;
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translate(50px, -50%); }
+  to { opacity: 1; transform: translate(0, -50%); }
+}
+
+/* --- RESPONSIVIDADE DA COLINHA --- */
+/* Se a tela for menor que 1150px (apertado para ficar do lado), move para baixo */
+@media (max-width: 1150px) {
+  .login-cheat-sheet {
+    position: static; /* Remove posição absoluta */
+    transform: none;
+    width: 600px; /* Mesma largura do login */
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    box-shadow: none;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+  }
+
+  .login-cheat-sheet h3 {
+    display: none; /* Remove título na versão horizontal */
+  }
+
+  .cheat-item {
+    flex: 1;
+    margin-bottom: 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background-color: var(--login-bg-card); /* Volta a ter fundo */
+    border: 1px solid var(--login-border);
+  }
+}
+
+/* Em telas muito pequenas (Mobile), empilha tudo */
+@media (max-width: 650px) {
+  .login-cheat-sheet {
+    width: 90%;
+    flex-direction: column;
+  }
+  
+  .cheat-item {
+    width: 100%;
+    box-sizing: border-box; /* Garante que padding não estoure */
+  }
+}
+
+/* =========================================
+   ESTILOS DO MODAL DE BOAS-VINDAS
    ========================================= */
 .welcome-modal-overlay {
   position: fixed;
@@ -196,7 +302,7 @@ select, option {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.85); /* Fundo escuro atrás do modal */
+  background-color: rgba(0, 0, 0, 0.85);
   z-index: 9999;
   display: flex;
   justify-content: center;
@@ -206,7 +312,7 @@ select, option {
 }
 
 .welcome-modal-content {
-  background-color: var(--login-bg-card); /* AQUI ESTAVA O ERRO: agora usa cor sólida definida no topo */
+  background-color: var(--login-bg-card);
   color: var(--login-text);
   width: 100%;
   max-width: 600px;
@@ -225,7 +331,6 @@ select, option {
   to { opacity: 1; transform: scale(1); }
 }
 
-/* Cabeçalho do Modal */
 .welcome-header {
   padding: 20px;
   background-color: var(--login-bg-inner);
@@ -239,7 +344,6 @@ select, option {
   color: var(--login-text);
 }
 
-/* Botão Fechar (X) */
 .welcome-close-icon {
   position: absolute;
   top: 15px;
@@ -256,7 +360,6 @@ select, option {
   color: #ff5f5f;
 }
 
-/* Corpo do Modal */
 .welcome-body {
   padding: 25px;
 }
@@ -268,7 +371,6 @@ select, option {
   line-height: 1.6;
 }
 
-/* Área das Contas */
 .welcome-accounts {
   display: flex;
   flex-direction: column;
@@ -277,7 +379,7 @@ select, option {
 }
 
 .account-box {
-  background-color: var(--login-bg-inner); /* Destaque sutil */
+  background-color: var(--login-bg-inner);
   border: 1px solid var(--login-border);
   padding: 15px;
   border-radius: 8px;
@@ -297,7 +399,6 @@ select, option {
   color: var(--login-text);
 }
 
-/* Créditos */
 .welcome-credits {
   font-size: 0.85rem;
   background-color: rgba(0,0,0,0.05);
@@ -319,12 +420,10 @@ select, option {
   text-decoration: none;
 }
 
-/* Ajuste de link para Dark Mode */
 [data-theme='dark'] .welcome-credits a {
   color: #6495ED; 
 }
 
-/* Botão inferior grande */
 .welcome-close-btn {
   display: block;
   width: calc(100% - 50px);
