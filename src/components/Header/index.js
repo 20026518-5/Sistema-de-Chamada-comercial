@@ -1,12 +1,12 @@
 import { useContext } from 'react';
 import { AuthContext } from '../../contexts/auth';
 import { Link } from 'react-router-dom';
-import { FiHome, FiUser, FiSettings } from "react-icons/fi";
+import { FiHome, FiUser, FiSettings, FiLogOut, FiUsers, FiBriefcase } from "react-icons/fi";
 import avatar from '../../assets/avatar.png';
 import './header.css';
 
 export default function Header(){
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
 
   return(
     <div className="sidebar">
@@ -19,18 +19,31 @@ export default function Header(){
         Chamados
       </Link>
 
-      {/* AQUI ESTÁ O TRUQUE: Só mostra se for ADMIN */}
+      {/* Opções exclusivas para Administradores */}
       {user.isadm && (
-        <Link to="/customers">
-          <FiUser color="#FFF" size={24} />
-          Clientes
-        </Link>
+        <>
+          <Link to="/customers">
+            <FiBriefcase color="#FFF" size={24} />
+            Secretarias
+          </Link>
+
+          <Link to="/servidores">
+            <FiUsers color="#FFF" size={24} />
+            Servidores
+          </Link>
+        </>
       )}
 
       <Link to="/profile">
         <FiSettings color="#FFF" size={24} />
         Perfil
       </Link>
+
+      {/* Botão de Sair */}
+      <button onClick={() => logout()} className="sidebar-logout">
+        <FiLogOut color="#FFF" size={24} />
+        Sair
+      </button>
     </div>
   )
 }
