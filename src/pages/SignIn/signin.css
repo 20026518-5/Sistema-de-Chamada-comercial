@@ -55,6 +55,7 @@
 }
 
 .login-area {
+background-color: transparent;
   background-color: var(--login-bg-inner);
   width: 100%;
   display: flex;
@@ -63,9 +64,13 @@
 }
 
 .login-area img {
-  width: 170px;
-  height: 170px;
-  padding: 20px;
+   width: 100%;          /* Faz a imagem ocupar 100% da largura da caixa */
+  height: 100%;         /* Faz a imagem ocupar 100% da altura da caixa */
+  object-fit: contain;  /* Enquadra a imagem perfeitamente sem cortar ou achatar */
+  
+  /* Caso exista algum "padding" (espaço interno) ou "border-radius", você pode zerar: */
+  padding: 0; 
+  border-radius: 0;
 }
 
 form {
