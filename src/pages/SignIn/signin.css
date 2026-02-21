@@ -55,22 +55,21 @@
 }
 
 .login-area {
-background-color: transparent;
-  background-color: var(--login-bg-inner);
+/* Fixamos a cor #f0f0f5 para que ela não mude no tema escuro */
+  background-color: #f0f0f5; 
   width: 100%;
+  /* Fixamos uma altura para a caixa, assim a logo tem um espaço definido para se enquadrar */
+  height: 170px; 
   display: flex;
   justify-content: center;
   border-radius: 4px;
 }
 
 .login-area img {
-   width: 100%;          /* Faz a imagem ocupar 100% da largura da caixa */
-  height: 100%;         /* Faz a imagem ocupar 100% da altura da caixa */
-  object-fit: contain;  /* Enquadra a imagem perfeitamente sem cortar ou achatar */
-  
-  /* Caso exista algum "padding" (espaço interno) ou "border-radius", você pode zerar: */
-  padding: 0; 
-  border-radius: 0;
+width: 100%;         /* Ocupa toda a largura disponível */
+  height: 100%;        /* Ocupa toda a altura disponível */
+  object-fit: contain; /* Enquadra a imagem perfeitamente sem cortar */
+  padding: 10px;
 }
 
 form {
