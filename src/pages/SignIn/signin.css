@@ -55,21 +55,25 @@
 }
 
 .login-area {
-/* Fixamos a cor #f0f0f5 para que ela não mude no tema escuro */
-  background-color: #f0f0f5; 
+background-color: transparent; /* Deixa transparente para mesclar com o fundo */
   width: 100%;
-  /* Fixamos uma altura para a caixa, assim a logo tem um espaço definido para se enquadrar */
-  height: 170px; 
+  height: 170px;
   display: flex;
   justify-content: center;
   border-radius: 4px;
 }
 
 .login-area img {
-width: 100%;         /* Ocupa toda a largura disponível */
-  height: 100%;        /* Ocupa toda a altura disponível */
-  object-fit: contain; /* Enquadra a imagem perfeitamente sem cortar */
+width: 100%;
+  height: 100%;
+  object-fit: contain;
   padding: 10px;
+  transition: filter 0.3s; /* Faz a troca de cor ser suave */
+}
+
+[data-theme="dark"] .login-area img {
+  /* Isso pega a sua logo escura e transforma em branca no tema escuro: */
+  filter: brightness(0) invert(1); 
 }
 
 form {
